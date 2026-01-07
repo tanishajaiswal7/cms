@@ -1,0 +1,206 @@
+/* BRAND SECTION */
+.brand {
+  position: absolute;
+  top: 80px;
+  text-align: center;
+  color: white;
+}
+
+.login-container h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #ffffff;
+}
+
+.brand p {
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  color: #e5e7eb; /* soft light gray */
+}
+
+/* LOGIN CONTAINER */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0f172a, #020617);
+  position: relative;
+}
+
+/* LOGIN CARD */
+.login-card {
+  background: #ffffff;
+  padding: 2.5rem;
+  width: 360px;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+  text-align: center;
+  margin-top: 40px;
+}
+
+/* HEADINGS */
+.login-card h2 {
+  margin-bottom: 0.5rem;
+  color: #020617;
+}
+
+.login-card p {
+  margin-bottom: 1.5rem;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+/* INPUTS */
+.login-card input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 0.95rem;
+}
+
+/* BUTTON */
+.login-card button {
+  width: 100%;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #2563eb;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.login-card button:hover {
+  background-color: #1d4ed8;
+}
+
+.login-card button:disabled {
+  background-color: #93c5fd;
+  cursor: not-allowed;
+}
+
+/* ERROR */
+.error {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 0.6rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+.auth-links-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 1.2rem;
+}
+
+.auth-link {
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+.auth-link span {
+  margin-right: 5px;
+}
+
+.auth-link a {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.auth-link a:hover {
+  text-decoration: underline;
+}
+
+/* FORGOT PASSWORD BUTTON */
+.forgot-password-btn {
+  background: none;
+  border: none;
+  color: #2563eb;
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0;
+  transition: text-decoration 0.2s ease;
+}
+
+.forgot-password-btn:hover {
+  text-decoration: underline;
+}
+
+/* FORGOT PASSWORD CARD */
+.forgot-password-card {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* SUCCESS MESSAGE */
+.success {
+  background: #dcfce7;
+  color: #166534;
+  padding: 0.6rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  border-left: 4px solid #16a34a;
+}
+
+/* RESET PASSWORD BUTTON */
+.reset-btn {
+  width: 100%;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #16a34a;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  margin-bottom: 0.8rem;
+}
+
+.reset-btn:hover {
+  background-color: #15803d;
+}
+
+.reset-btn:disabled {
+  background-color: #86efac;
+  cursor: not-allowed;
+}
+
+/* BACK BUTTON */
+.back-btn {
+  width: 100%;
+  padding: 0.8rem;
+  border: 2px solid #cbd5e1;
+  border-radius: 8px;
+  background-color: transparent;
+  color: #475569;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+}

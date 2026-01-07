@@ -1,0 +1,198 @@
+.dashboard-container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 2rem;
+}
+
+/* HEADER */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-header h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.raise-btn {
+  background-color: #2563eb;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+/* EMPTY STATE */
+.empty-state {
+  text-align: center;
+  margin-top: 4rem;
+  color: #475569;
+}
+
+/* LIST */
+.complaints-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+/* CARD */
+.complaint-card {
+  background: white;
+  border-radius: 14px;
+  padding: 1.2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* CARD HEADER */
+.complaint-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.complaint-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+/* STATUS */
+.status {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.status.pending {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status.in-progress {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.status.resolved {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+/* META */
+.complaint-meta {
+  margin-top: 0.4rem;
+  font-size: 0.85rem;
+  color: #475569;
+}
+
+/* DESCRIPTION */
+.complaint-desc {
+  margin-top: 0.6rem;
+  font-size: 0.95rem;
+  color: #1e293b;
+}
+
+/* ADMIN MESSAGE */
+.admin-message {
+  margin-top: 0.8rem;
+  background: #f1f5f9;
+  border-left: 4px solid #2563eb;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.85rem;
+  border-radius: 6px;
+}
+
+/* IMAGES */
+.complaint-images {
+  margin-top: 0.8rem;
+  display: flex;
+  gap: 10px;
+}
+
+.complaint-images img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+/* DELETE */
+/* .delete-btn {
+  margin-top: 0.9rem;
+  background-color: #dc2626;
+  color: rgb(133, 62, 62);
+  border: none;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+} */
+
+/* Enhanced inline delete button (safe UI only) */
+.delete-btn.inline-delete {
+  background-color: transparent;
+  color: #dc2626;               /* soft red text */
+  border: 1px solid #fecaca;    /* light red border */
+  border-radius: 999px;         /* pill shape */
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.delete-btn.inline-delete:hover {
+  background-color: #fee2e2;    /* very light red bg */
+  color: #b91c1c;
+}
+
+.technician-box {
+  margin-top: 0.8rem;
+  background: #ecfeff;
+  border-left: 4px solid #0ea5e9;
+  padding: 0.6rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: #0f172a;
+}
+
+.technician-box strong {
+  display: block;
+  margin-bottom: 4px;
+}
+.phone-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.copy-icon {
+  cursor: pointer;
+  font-size: 1rem;
+  color: #2563eb;
+}
+
+.copy-icon:hover {
+  transform: scale(1.1);
+  color: #1d4ed8;
+}
+
+.status-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Inline delete button next to Pending */
+.inline-delete {
+  margin-top: 0;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+}

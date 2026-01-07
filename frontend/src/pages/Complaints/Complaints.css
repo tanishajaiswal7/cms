@@ -1,0 +1,41 @@
+.complaint-container {
+  padding: 2rem;
+  max-width: 500px;
+  margin: auto;
+}
+
+.complaint-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.complaint-form input,
+.complaint-form textarea,
+.complaint-form select {
+  padding: 0.7rem;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+}
+
+.complaint-form textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.complaint-form button {
+  background-color: #2563eb;
+  color: white;
+  padding: 0.6rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.complaint-form button:disabled {
+  background-color: #93c5fd;
+}
+
+.error {
+  color: #b91c1c;
+}

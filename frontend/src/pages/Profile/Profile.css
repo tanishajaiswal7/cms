@@ -1,0 +1,79 @@
+.profile-container {
+  max-width: 620px;
+  margin: 2.5rem auto;
+  padding: 0 1rem;
+}
+
+.profile-container h2 {
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-size: 1.6rem;
+}
+
+.profile-card {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.profile-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.1rem;
+}
+
+.profile-row label {
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+  color: #475569;
+}
+
+.profile-row input,
+.profile-row textarea {
+  padding: 0.6rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 0.95rem;
+}
+
+.profile-row textarea {
+  resize: none;
+  min-height: 80px;
+}
+
+.profile-row input:disabled,
+.profile-row textarea:disabled {
+  background: #f8fafc;
+  color: #64748b;
+}
+
+.profile-card button {
+  width: 100%;
+  padding: 0.7rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  margin-top: 0.8rem;
+}
+
+.profile-card button:hover {
+  opacity: 0.95;
+}
+
+.save-btn {
+  background-color: #2563eb;
+  color: white;
+}
+
+.cancel-btn {
+  background-color: #e5e7eb;
+  color: #111827;
+  margin-top: 0.5rem;
+}
+
+.profile-actions {
+  display: flex;
+  flex-direction: column;
+}
