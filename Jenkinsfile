@@ -3,49 +3,25 @@ pipeline {
 
     stages {
 
-        stage('Install Backend Dependencies') {
-            agent {
-                docker {
-                    image 'node:18-alpine'
-                }
-            }
+        stage('Checkout Code') {
             steps {
-                dir('backend') {
-                    sh 'npm install'
-                }
-            }
-        }
-
-        stage('Install Frontend Dependencies') {
-            agent {
-                docker {
-                    image 'node:18-alpine'
-                }
-            }
-            steps {
-                dir('frontend') {
-                    sh 'npm install'
-                }
-            }
-        }
-
-        stage('Build Frontend') {
-            agent {
-                docker {
-                    image 'node:18-alpine'
-                }
-            }
-            steps {
-                dir('frontend') {
-                    sh 'npm run build'
-                }
+                checkout scm
             }
         }
 
         stage('Build Docker Images') {
             steps {
-                sh 'docker-compose build'
+                sh 'docker compose build'
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Build Successful 🚀'
+        }
+        failure {
+            echo 'Build Failed ❌'
         }
     }
 }
