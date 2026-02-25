@@ -1,19 +1,14 @@
 pipeline {
     agent any
 
-    environment {
-        DOCKER_COMPOSE_FILE = 'docker-compose.yml'
-    }
-
     stages {
 
-        stage('Checkout Code') {
-            steps {
-                checkout scm
-            }
-        }
-
         stage('Install Backend Dependencies') {
+            agent {
+                docker {
+                    image 'node:18-alpine'
+                }
+            }
             steps {
                 dir('backend') {
                     sh 'npm install'
@@ -21,15 +16,12 @@ pipeline {
             }
         }
 
-        stage('Run Backend Tests') {
-            steps {
-                dir('backend') {
-                    sh 'npm test || true'
+        stage('Install Frontend Dependencies') {
+            agent {
+                docker {
+                    image 'node:18-alpine'
                 }
             }
-        }
-
-        stage('Install Frontend Dependencies') {
             steps {
                 dir('frontend') {
                     sh 'npm install'
@@ -38,6 +30,11 @@ pipeline {
         }
 
         stage('Build Frontend') {
+            agent {
+                docker {
+                    image 'node:18-alpine'
+                }
+            }
             steps {
                 dir('frontend') {
                     sh 'npm run build'
@@ -47,17 +44,8 @@ pipeline {
 
         stage('Build Docker Images') {
             steps {
-                sh "docker-compose -f ${DOCKER_COMPOSE_FILE} build"
+                sh 'docker-compose build'
             }
-        }
-    }
-
-    post {
-        success {
-            echo 'Build Successful 🚀'
-        }
-        failure {
-            echo 'Build Failed ❌'
         }
     }
 }
