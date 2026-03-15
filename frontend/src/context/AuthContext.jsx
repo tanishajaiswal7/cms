@@ -7,6 +7,15 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const normalizeUser = (rawUser) => {
+    if (!rawUser) return null;
+    return {
+      ...rawUser,
+      _id: rawUser._id || rawUser.id,
+      id: rawUser.id || rawUser._id,
+    };
+  };
+
   // login
   const login = async (email, password) => {
     const res = await api.post("/api/auth/login", {
@@ -18,8 +27,9 @@ export const AuthProvider = ({ children }) => {
   localStorage.setItem("accessToken", res.data.accessToken);
 }
 
-    setUser(res.data.user);
-    return res.data.user;
+    const normalized = normalizeUser(res.data.user);
+    setUser(normalized);
+    return normalized;
   };
 
   // logout
@@ -33,8 +43,19 @@ export const AuthProvider = ({ children }) => {
     const refresh = async () => {
       try {
         const res = await api.get("/api/auth/refresh");
-        localStorage.setItem("accessToken", res.data.accessToken);
+        if (res.data?.accessToken) {
+          localStorage.setItem("accessToken", res.data.accessToken);
+        }
+
+        let refreshedUser = normalizeUser(res.data?.user);
+        if (!refreshedUser) {
+          const meRes = await api.get("/api/users/me");
+          refreshedUser = normalizeUser(meRes.data);
+        }
+
+        setUser(refreshedUser);
       } catch (err) {
+        localStorage.removeItem("accessToken");
         setUser(null);
       } finally {
         setLoading(false);

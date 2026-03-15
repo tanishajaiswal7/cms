@@ -1,6 +1,5 @@
 const express = require("express");
 require("dotenv").config();
-
 const cors = require("cors");
 const path = require("path");
 const connectDB = require("./config/db");
@@ -10,8 +9,10 @@ const authRoutes = require("./routes/authRoutes");
 const serviceProviderRoutes = require("./routes/serviceProviderRoutes");
 const analyticsRoutes = require("./routes/analyticsRoutes");
 const userRoutes = require("./routes/userRoutes");
-
-
+const rentRoutes = require("./routes/rentRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
+const adminPaymentRoutes = require("./routes/adminPaymentRoutes");
+const { handleStripeWebhook } = require("./controllers/paymentController");
 
 const errorHandler = require("./middlewares/errorHandler");
 const morgan = require("morgan");
@@ -24,6 +25,12 @@ connectDB();
 // ======================
 // MIDDLEWARES
 // ======================
+app.post(
+  "/api/payments/webhook",
+  express.raw({ type: "application/json" }),
+  handleStripeWebhook
+);
+
 app.use(express.json());
 const allowedOrigins = [
   "http://localhost:3000",
@@ -55,7 +62,9 @@ app.use("/api/complaints", complaintRoutes);
 app.use("/api/providers", serviceProviderRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/users", userRoutes);
-
+app.use("/api/rents", rentRoutes);
+app.use("/api/payments", paymentRoutes);
+app.use("/api/admin/payments", adminPaymentRoutes);
 
 // ERROR HANDLER (⚠️ ALWAYS LAST)
 

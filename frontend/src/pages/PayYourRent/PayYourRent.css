@@ -1,0 +1,635 @@
+.pay-rent-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+  padding: 2rem 1rem;
+}
+
+.pay-rent-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 1rem 0;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.pay-rent-header h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: #64748b;
+  margin: 0.5rem 0 0 0;
+}
+
+/* ============= MONTH SELECTOR ============= */
+.month-selector-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.month-selector-wrapper label {
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 1rem;
+}
+
+.month-select {
+  padding: 0.75rem 1.2rem;
+  border: 2px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  background: white;
+  color: #1e293b;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 220px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.month-select:hover,
+.month-select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25);
+  background: #f0f4ff;
+}
+
+/* ============= LOADING STATE ============= */
+.loading-state {
+  max-width: 1200px;
+  margin: 2rem auto;
+  text-align: center;
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  color: #64748b;
+  font-size: 1.1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* ============= ERROR ALERT ============= */
+.error-alert {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background: #fee2e2;
+  border-left: 4px solid #dc2626;
+  border-radius: 10px;
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+  animation: shake 0.3s ease-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.alert-icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+
+.error-alert h4 {
+  margin: 0 0 0.5rem 0;
+  color: #991b1b;
+  font-size: 1.05rem;
+}
+
+.error-alert p {
+  margin: 0;
+  color: #7f1d1d;
+  font-size: 0.95rem;
+}
+
+.alert-close {
+  background: transparent;
+  border: none;
+  color: #dc2626;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  margin-left: auto;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.alert-close:hover {
+  transform: scale(1.2);
+}
+
+/* ============= RENT ALERT BANNER ============= */
+.rent-alert {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  border-radius: 12px;
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  animation: slideDown 0.4s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rent-alert-paid {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  border-left: 4px solid #16a34a;
+}
+
+.rent-alert-unpaid {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  border-left: 4px solid #dc2626;
+}
+
+.rent-alert-partial {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-left: 4px solid #f59e0b;
+}
+
+.alert-icon-section {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.alert-content {
+  flex: 1;
+}
+
+.alert-content h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.rent-alert-paid .alert-content h4 { color: #166534; }
+.rent-alert-unpaid .alert-content h4 { color: #991b1b; }
+.rent-alert-partial .alert-content h4 { color: #92400e; }
+
+.alert-content p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.rent-alert-paid .alert-content p { color: #15803d; }
+.rent-alert-unpaid .alert-content p { color: #7f1d1d; }
+.rent-alert-partial .alert-content p { color: #78350f; }
+
+.alert-dismiss {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.alert-dismiss:hover {
+  transform: scale(1.2);
+}
+
+/* ============= RENT DETAILS CARD ============= */
+.rent-details-card {
+  max-width: 1200px;
+  margin: 0 auto 2rem;
+  background: white;
+  border-radius: 14px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============= USER INFO ============= */
+.user-info {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 2px solid #e2e8f0;
+  align-items: center;
+}
+
+.avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.user-details h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: #1e293b;
+  font-weight: 700;
+}
+
+.user-details p {
+  margin: 0.4rem 0 0 0;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+/* ============= STATUS SECTION ============= */
+.status-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 1rem 0;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  border: 2px solid;
+  letter-spacing: 0.5px;
+}
+
+.status-paid {
+  background: #dcfce7;
+  color: #166534;
+  border-color: #16a34a;
+}
+
+.status-unpaid {
+  background: #fee2e2;
+  color: #991b1b;
+  border-color: #dc2626;
+}
+
+.status-partial {
+  background: #fef3c7;
+  color: #92400e;
+  border-color: #f59e0b;
+}
+
+.due-date {
+  font-size: 0.95rem;
+  color: #64748b;
+  margin: 0;
+  font-weight: 600;
+}
+
+/* ============= RENT BREAKDOWN ============= */
+.rent-breakdown {
+  margin-bottom: 2rem;
+  background: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.rent-breakdown h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 1.5rem 0;
+}
+
+.breakdown-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 0.95rem;
+}
+
+.breakdown-item:last-child {
+  border-bottom: none;
+}
+
+.breakdown-item.warning {
+  color: #b91c1c;
+  background: #fef2f2;
+  padding: 1rem;
+  margin: 0.5rem 0;
+  border-radius: 8px;
+  border-left: 4px solid #dc2626;
+}
+
+.breakdown-item.total {
+  padding: 1.5rem 0;
+  font-weight: 700;
+  font-size: 1.3rem;
+  border: none;
+  color: #2563eb;
+  background: #eff6ff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.icon {
+  font-size: 1.3rem;
+}
+
+.amount {
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 1.05rem;
+}
+
+.breakdown-divider {
+  height: 1px;
+  background: #cbd5e1;
+  margin: 1rem 0;
+}
+
+.amount-total {
+  font-weight: 700;
+  color: #2563eb;
+  font-size: 1.4rem;
+}
+
+/* ============= NOTES SECTION ============= */
+.notes-section {
+  background: #fffbeb;
+  padding: 1.5rem;
+  border-radius: 10px;
+  border-left: 4px solid #f59e0b;
+  margin-bottom: 2rem;
+}
+
+.notes-section h4 {
+  margin: 0 0 0.8rem 0;
+  color: #92400e;
+  font-size: 1rem;
+}
+
+.notes-section p {
+  margin: 0;
+  color: #78350f;
+  line-height: 1.6;
+}
+
+/* ============= PAYMENT SECTION ============= */
+.payment-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: #f0f4ff;
+  border-radius: 10px;
+  border: 2px solid #dbeafe;
+  text-align: center;
+}
+
+.payment-info {
+  font-size: 1.1rem;
+  color: #1e40af;
+  margin: 0 0 1.5rem 0;
+  font-weight: 600;
+}
+
+.payment-info strong {
+  color: #2563eb;
+  font-size: 1.3rem;
+}
+
+.btn-pay-now {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  color: white;
+  padding: 0.85rem 2rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+  letter-spacing: 0.5px;
+}
+
+.btn-pay-now:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+}
+
+.btn-pay-now:active {
+  transform: translateY(0);
+}
+
+.paid-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: #16a34a;
+}
+
+.check-icon {
+  font-size: 2.5rem;
+}
+
+.paid-message p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* ============= PAYMENT HISTORY ============= */
+.payment-history {
+  background: #f0fdf4;
+  padding: 1.5rem;
+  border-radius: 10px;
+  border-left: 4px solid #16a34a;
+  margin-bottom: 2rem;
+}
+
+.payment-history h4 {
+  margin: 0 0 1rem 0;
+  color: #166534;
+  font-size: 1rem;
+}
+
+.payment-history p {
+  margin: 0.5rem 0;
+  color: #15803d;
+}
+
+/* ============= NO RENT STATE ============= */
+.no-rent-state {
+  max-width: 1200px;
+  margin: 3rem auto;
+  text-align: center;
+  padding: 3rem;
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.empty-illustration {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+}
+
+.no-rent-state h3 {
+  font-size: 1.5rem;
+  color: #1e293b;
+  margin: 0 0 1rem 0;
+}
+
+.no-rent-state p {
+  color: #64748b;
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* ============= RENT SUMMARY ============= */
+.rents-summary {
+  max-width: 1200px;
+  margin: 3rem auto;
+}
+
+.rents-summary h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 1.5rem 0;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.summary-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border-top: 4px solid #2563eb;
+}
+
+.summary-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.summary-label {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.8rem;
+}
+
+.summary-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #2563eb;
+}
+
+.summary-value.paid {
+  color: #16a34a;
+}
+
+.summary-value.unpaid {
+  color: #dc2626;
+}
+
+.summary-value.total {
+  color: #7c3aed;
+}
+
+/* ============= RESPONSIVE ============= */
+@media (max-width: 768px) {
+  .pay-rent-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .month-selector-wrapper {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .month-select {
+    width: 100%;
+  }
+
+  .rent-details-card {
+    padding: 1.5rem;
+  }
+
+  .user-info {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .status-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .breakdown-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

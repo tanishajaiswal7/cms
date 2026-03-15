@@ -31,6 +31,14 @@ function AdminHome() {
           </div>
 
           <div
+            className="admin-card"
+            onClick={() => navigate("/admin/rent")}
+          >
+            <h3>💰 Manage Rent</h3>
+            <p>Track rent payments, set charges & fines</p>
+          </div>
+
+          <div
             className="admin-card analytics-card"
             onClick={() => navigate("/admin/analytics")}
           >

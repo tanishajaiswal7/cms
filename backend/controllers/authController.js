@@ -39,6 +39,7 @@ const registerUser = async (req, res) => {
     res.status(201).json({
       message: "User registered successfully",
       user: {
+        _id: user._id,
         id: user._id,
         name: user.name,
         email: user.email,
@@ -96,6 +97,7 @@ const loginUser = async (req, res) => {
     res.json({
       accessToken,
       user: {
+        _id: user._id,
         id: user._id,
         name: user.name,
         email: user.email,
@@ -110,7 +112,7 @@ const loginUser = async (req, res) => {
 /* =========================
    REFRESH TOKEN
 ========================= */
-const refreshAccessToken = (req, res) => {
+const refreshAccessToken = async (req, res) => {
   const refreshToken = req.cookies.refreshToken;
   if (!refreshToken) {
     return res.status(401).json({ message: "No refresh token" });
@@ -118,14 +120,28 @@ const refreshAccessToken = (req, res) => {
 
   try {
     const decoded = jwt.verify(refreshToken, process.env.REFRESH_SECRET);
+    const user = await User.findById(decoded.id).select("_id name email role");
+
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
 
     const newAccessToken = jwt.sign(
-      { id: decoded.id },
+      { id: user._id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "15m" }
     );
 
-    res.json({ accessToken: newAccessToken });
+    res.json({
+      accessToken: newAccessToken,
+      user: {
+        _id: user._id,
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
   } catch (error) {
     res.status(403).json({ message: "Invalid refresh token" });
   }

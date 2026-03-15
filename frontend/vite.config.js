@@ -6,6 +6,6 @@ export default defineConfig({
   plugins: [react()],
     server: {
     port: 3000,       
-    strictPort: true, //no auto move to next port
+    strictPort: false, // Allow auto-switching to next available port
   },
 })

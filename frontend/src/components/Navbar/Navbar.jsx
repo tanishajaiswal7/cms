@@ -1,9 +1,15 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import "./Navbar.css";
 
 function Navbar() {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   return (
     <nav className="navbar">
@@ -17,6 +23,7 @@ function Navbar() {
             <Link to="/admin">Home</Link>
             <Link to="/admin/complaints">Complaints</Link>
             <Link to="/admin/providers">Providers</Link>
+            <Link to="/admin/rent">Rent Management</Link>
             <Link to="/admin/analytics">Analytics</Link>
           </div>
         )}
@@ -27,6 +34,7 @@ function Navbar() {
   
             <Link to="/dashboard">My Complaints</Link>
             <Link to="/complaints/new">Raise Complaint</Link>
+            <Link to="/pay-rent">Pay Your Rent</Link>
           </div>
         )}
       </div>
@@ -39,7 +47,7 @@ function Navbar() {
             <Link to="/profile" className="profile-link">
               Profile
             </Link>
-            <button onClick={logout}>Logout</button>
+            <button onClick={handleLogout}>Logout</button>
           </>
         )}
       </div>

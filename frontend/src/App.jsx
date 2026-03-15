@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
 
 import Register from "./pages/Register/Register";
 import Login from "./pages/Login/Login";
@@ -11,6 +13,11 @@ import AdminHome from "./pages/AdminHome/AdminHome";
 import AdminAnalytics from "./pages/AdminAnalytics/AdminAnalytics";
 import Profile from "./pages/Profile/Profile";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
+import AdminRentManagement from "./pages/AdminRentManagement/AdminRentManagement";
+import PayYourRent from "./pages/PayYourRent/PayYourRent";
+
+// Initialize Stripe
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 
 
@@ -20,7 +27,8 @@ import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
+      <Elements stripe={stripePromise}>
+        <Routes>
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
          <Route path="/admin/providers" element=
@@ -52,6 +60,26 @@ function App() {
         />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/profile" element={<Profile/>}/>
+        
+        {/* RENT ROUTES */}
+        <Route
+          path="/admin/rent"
+          element={
+            <ProtectedRoute role="admin">
+              <AdminRentManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/pay-rent"
+          element={
+            <ProtectedRoute role="resident">
+              <PayYourRent />
+            </ProtectedRoute>
+          }
+        />
+        
+        <Route path="/profile" element={<Profile/>}/>
         <Route
           path="/admin"
           element={
@@ -82,6 +110,7 @@ function App() {
         />
 
       </Routes>
+      </Elements>
     </BrowserRouter>
 
   );
