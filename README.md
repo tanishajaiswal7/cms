@@ -2,6 +2,15 @@
 
 A full-stack web application for managing complaints and service providers. The system allows users to register, file complaints, track their status, and enables administrators to manage complaints, service providers, and view analytics.
 
+## 📚 Docs Index
+
+- [Rent Feature Guide](./RENT_FEATURE_GUIDE.md)
+- [Stripe Integration Guide](./STRIPE_INTEGRATION_GUIDE.md)
+- [Payment API Documentation](./PAYMENT_API_DOCUMENTATION.md)
+- [Stripe Deployment Checklist](./STRIPE_DEPLOYMENT_CHECKLIST.md)
+- [Stripe Production Setup](./STRIPE_PRODUCTION_SETUP.md)
+- [Stripe Security Best Practices](./STRIPE_SECURITY_BEST_PRACTICES.md)
+
 ## 📋 Table of Contents
 
 - [Features](#features)
@@ -121,7 +130,7 @@ CMS/
 │   ├── package.json
 │   ├── vite.config.js
 │   └── index.html
-└── Readme.md
+└── README.md
 ```
 
 ## 🚀 Backend Setup
