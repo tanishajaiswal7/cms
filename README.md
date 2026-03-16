@@ -28,13 +28,26 @@ A full-stack web application for managing complaints and service providers. The 
 - **Complaint Filing** - Create and submit complaints with images
 - **Complaint Tracking** - View complaint status and history
 - **Profile Management** - Update user profile information
+- **Rent Payment** - Pay rent online with Stripe integration
+- **Payment History** - View payment receipts and transaction history
+- **Resident Management** - Manage resident profiles and information
 
 ### Admin Features
 - **Complaint Management** - View, filter, and manage user complaints
 - **Service Provider Management** - Manage service providers and assign to complaints
-- **Analytics Dashboard** - View complaint statistics and trends
+- **Resident Management** - View and manage all registered residents
+- **Rent Management** - Create, update, and track rent records for residents
+- **Payment Management** - Monitor rent payments and payment statuses
+- **Admin Analytics Dashboard** - View complaint statistics, payment trends, and system analytics
 - **User Management** - Monitor and manage registered users
-- **WhatsApp Notifications** - Send updates via WhatsApp using Twilio
+- **WhatsApp Notifications** - Send updates via WhatsApp using Twilio API
+
+### Payment Features
+- **Stripe Payment Integration** - Secure payment processing with Stripe
+- **Payment Intent Creation** - Create payment intents for rent payments
+- **Webhook Handling** - Automated payment confirmation via Stripe webhooks
+- **Payment Receipts** - Generate and store payment receipts
+- **Payment Status Tracking** - Real-time payment status updates
 
 ### Security Features
 - **JWT Authentication** - Secure token-based authentication with access & refresh tokens
@@ -42,6 +55,7 @@ A full-stack web application for managing complaints and service providers. The 
 - **Rate Limiting** - Prevent abuse with rate limiting middleware
 - **CORS Protection** - Cross-origin request handling
 - **Input Validation** - Server-side validation for all inputs
+- **Webhook Security** - Stripe webhook signature verification
 
 ## 🛠 Tech Stack
 
@@ -74,60 +88,85 @@ A full-stack web application for managing complaints and service providers. The 
 CMS/
 ├── backend/
 │   ├── config/
-│   │   ├── db.js                 # MongoDB connection
-│   │   └── multer.js             # File upload configuration
+│   │   ├── db.js                       # MongoDB connection
+│   │   ├── multer.js                   # File upload configuration
+│   │   └── stripe.js                   # Stripe configuration
 │   ├── controllers/
-│   │   ├── authController.js     # Authentication logic
-│   │   ├── complaintController.js # Complaint management
-│   │   ├── userController.js     # User management
-│   │   ├── serviceProviderController.js
-│   │   └── analyticsController.js # Analytics data
+│   │   ├── authController.js           # Authentication logic
+│   │   ├── complaintController.js      # Complaint management
+│   │   ├── userController.js           # User management
+│   │   ├── serviceProviderController.js # Service provider management
+│   │   ├── analyticsController.js      # Analytics data
+│   │   ├── paymentController.js        # Payment processing & Stripe
+│   │   ├── rentController.js           # Rent management
+│   │   ├── residentController.js       # Resident management
+│   │   ├── adminPaymentController.js   # Admin payment management
 │   ├── middlewares/
-│   │   ├── authMiddleware.js     # JWT verification
-│   │   ├── errorHandler.js       # Error handling
-│   │   └── rateLimiter.js        # Rate limiting
+│   │   ├── authMiddleware.js           # JWT verification
+│   │   ├── errorHandler.js             # Error handling
+│   │   └── rateLimiter.js              # Rate limiting
 │   ├── models/
-│   │   ├── User.js               # User schema
-│   │   ├── Complaint.js          # Complaint schema
-│   │   └── ServiceProvider.js    # Service provider schema
+│   │   ├── User.js                     # User schema
+│   │   ├── Complaint.js                # Complaint schema
+│   │   ├── ServiceProvider.js          # Service provider schema
+│   │   ├── Resident.js                 # Resident schema
+│   │   ├── Rent.js                     # Rent record schema
+│   │   └── Payment.js                  # Payment record schema
 │   ├── routes/
-│   │   ├── authRoutes.js
-│   │   ├── complaintRoutes.js
-│   │   ├── userRoutes.js
-│   │   ├── serviceProviderRoutes.js
-│   │   └── analyticsRoutes.js
+│   │   ├── authRoutes.js               # Authentication routes
+│   │   ├── complaintRoutes.js          # Complaint routes
+│   │   ├── userRoutes.js               # User routes
+│   │   ├── serviceProviderRoutes.js    # Provider routes
+│   │   ├── analyticsRoutes.js          # Analytics routes
+│   │   ├── paymentRoutes.js            # Payment routes
+│   │   ├── rentRoutes.js               # Rent routes
+│   │   ├── residentRoutes.js           # Resident routes
+│   │   ├── adminPaymentRoutes.js       # Admin payment routes
+│   ├── webhooks/
+│   │   └── stripeWebhook.js            # Stripe webhook handling
 │   ├── utils/
-│   │   └── whatsapp.js           # Twilio WhatsApp integration
-│   ├── uploads/                  # File storage directory
-│   ├── index.js                  # Server entry point
+│   │   └── whatsapp.js                 # Twilio WhatsApp integration
+│   ├── uploads/                        # File storage directory
+│   ├── index.js                        # Server entry point
 │   ├── package.json
-│   └── .env                      # Environment variables
+│   ├── .env                            # Environment variables
+│   └── Dockerfile                      # Docker configuration
 ├── frontend/
 │   ├── src/
 │   │   ├── api/
-│   │   │   └── axios.js          # API client setup
+│   │   │   └── axios.js                # API client setup
 │   │   ├── components/
-│   │   │   ├── Navbar/           # Navigation component
-│   │   │   └── ProtectedRoute/   # Route protection
+│   │   │   ├── Navbar/                 # Navigation component
+│   │   │   ├── ProtectedRoute/         # Route protection
+│   │   │   └── PaymentForm/            # Stripe payment form
 │   │   ├── context/
-│   │   │   └── AuthContext.jsx   # Authentication state
+│   │   │   └── AuthContext.jsx         # Authentication state
 │   │   ├── pages/
-│   │   │   ├── Register/
-│   │   │   ├── Login/
-│   │   │   ├── ForgotPassword/
-│   │   │   ├── Dashboard/        # User dashboard
-│   │   │   ├── Profile/
-│   │   │   ├── Complaints/       # Complaints page
-│   │   │   ├── AdminPanel/       # Admin dashboard
-│   │   │   ├── AdminHome/
-│   │   │   ├── AdminProviders/   # Provider management
-│   │   │   └── AdminAnalytics/   # Analytics view
+│   │   │   ├── Register/               # User registration
+│   │   │   ├── Login/                  # User login
+│   │   │   ├── ForgotPassword/         # Password recovery
+│   │   │   ├── Dashboard/              # User dashboard
+│   │   │   ├── Profile/                # User profile
+│   │   │   ├── Complaints/             # Complaints management
+│   │   │   ├── PayYourRent/            # Rent payment page
+│   │   │   ├── AdminPanel/             # Admin dashboard
+│   │   │   ├── AdminHome/              # Admin home page
+│   │   │   ├── AdminProviders/         # Provider management page
+│   │   │   ├── AdminResidents/         # Resident management page
+│   │   │   ├── AdminRentManagement/    # Rent management page
+│   │   │   └── AdminAnalytics/         # Analytics dashboard
+│   │   ├── utils/
+│   │   │   └── assetUrl.js             # Asset URL helper
 │   │   ├── App.jsx
 │   │   ├── main.jsx
 │   │   └── index.css
 │   ├── package.json
 │   ├── vite.config.js
+│   ├── nginx.conf                      # Nginx configuration
+│   ├── Dockerfile                      # Docker configuration
 │   └── index.html
+├── docker-compose.yml                  # Docker compose configuration
+├── Jenkinsfile                         # CI/CD pipeline
 └── README.md
 ```
 
@@ -371,6 +410,34 @@ docker-compose up -d
 - `GET /stats` - Get complaint statistics
 - `GET /trends` - Get complaint trends
 
+### Residents (`/api/residents`)
+- `GET /` - Get all residents (Admin)
+- `GET /:id` - Get resident by ID
+- `POST /` - Create new resident (Admin)
+- `PUT /:id` - Update resident (Admin)
+- `DELETE /:id` - Delete resident (Admin)
+
+### Rent Management (`/api/rents`)
+- `GET /` - Get all rent records (Admin)
+- `GET /:id` - Get rent record by ID
+- `GET /user/:userId` - Get rent records for a user
+- `POST /` - Create new rent record (Admin)
+- `PUT /:id` - Update rent record (Admin)
+- `DELETE /:id` - Delete rent record (Admin)
+
+### Payments (`/api/payments`)
+- `POST /create-intent` - Create Stripe payment intent
+- `GET /` - Get payment history
+- `GET /:id` - Get payment by ID
+- `POST /webhook` - Stripe webhook handler (for payment verification)
+- `GET /user/:userId` - Get user payment history
+
+### Admin Payments (`/api/admin/payments`)
+- `GET /` - Get all payments (Admin)
+- `GET /:id` - Get payment by ID (Admin)
+- `GET /resident/:residentId` - Get payments for a resident (Admin)
+- `PUT /:id/status` - Update payment status (Admin)
+
 ## 🔐 Environment Variables
 
 ### Backend Variables
@@ -386,7 +453,7 @@ docker-compose up -d
 | `STRIPE_WEBHOOK_SECRET` | Yes | Stripe webhook signing secret (whsec_*) |
 | `TWILIO_ACCOUNT_SID` | Yes | Twilio account identifier |
 | `TWILIO_AUTH_TOKEN` | Yes | Twilio authentication token |
-| `TWILIO_PHONE_NUMBER` | Yes | Phone number for Twilio (international format) |
+| `TWILIO_WHATSAPP_FROM` | Yes | WhatsApp number for Twilio (whatsapp:+1XXXXXXXXXX) |
 | `EMAIL_USER` | Yes | Email address for sending emails |
 | `EMAIL_PASS` | Yes | Email service password/app token |
 | `CORS_ORIGINS` | Yes | Comma-separated allowed origins (production URLs) |
@@ -453,19 +520,36 @@ docker-compose up -d
 
 ## 💻 Usage
 
-### User Workflow
+### Resident/User Workflow
 1. Register a new account
 2. Login with credentials
 3. File a complaint with details and images
 4. View complaint status on dashboard
-5. Receive WhatsApp notifications on updates
+5. View assigned rent records
+6. Pay rent online using Stripe
+7. View payment history and receipts
+8. Receive WhatsApp notifications on updates
 
 ### Admin Workflow
 1. Login as admin
-2. View all complaints and manage status
+2. View and manage all complaints
 3. Assign service providers to complaints
-4. Monitor user complaints and analytics
-5. Manage service providers
+4. Create and manage resident profiles
+5. Create and track rent records for residents
+6. Monitor rent payments
+7. View system analytics and reports
+8. Manage user and service provider data
+
+### Rent Payment Workflow
+1. Admin creates rent record for resident
+2. Resident receives WhatsApp notification
+3. Resident logs in and views "Pay Your Rent"
+4. Resident creates Stripe payment intent
+5. Payment processed through Stripe
+6. Webhook confirms payment
+7. Payment record created in database
+8. Resident receives payment confirmation
+9. Admin can view payment details
 
 ## 🔒 Authentication Flow
 
