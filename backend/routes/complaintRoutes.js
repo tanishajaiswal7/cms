@@ -16,7 +16,7 @@ const router = express.Router();
 router.post("/", protect, complaintLimiter, upload.array("images", 5), createComplaint);
 router.get("/", protect, getAllComplaints);
 router.put("/:id", protect, adminOnly, apiLimiter, updateComplaintStatus);
-router.delete("/:id", protect, adminOnly, apiLimiter, deleteComplaint);
+router.delete("/:id", protect, apiLimiter, deleteComplaint);
 router.put(
   "/:id/assign",
   protect,
