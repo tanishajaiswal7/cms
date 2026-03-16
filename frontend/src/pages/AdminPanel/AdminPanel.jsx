@@ -15,6 +15,10 @@ function AdminPanel() {
   const [expandedId, setExpandedId] = useState(null);
   const [adminMessages, setAdminMessages] = useState({});
   const [providers, setProviders] = useState([]);
+  
+  // Modal states
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [statusConfirmation, setStatusConfirmation] = useState(null);
 
 
 
@@ -72,16 +76,34 @@ const assignProvider = async (complaintId, providerId) => {
 
 
   // update complaint status
-  const updateStatus = async (id, newStatus,adminMessage) => {
+  const updateStatus = async (id, newStatus, adminMessage) => {
     try {
       await api.put(`/api/complaints/${id}`, {
         status: newStatus,
         adminMessage,
       });
       toast.success("Status updated successfully");
+      setStatusConfirmation(null);
       fetchComplaints();
     } catch {
       toast.error("Failed to update status");
+    }
+  };
+
+  const handleStatusChange = (complaintId, newStatus) => {
+    setStatusConfirmation({
+      complaintId,
+      newStatus,
+    });
+  };
+
+  const confirmStatusUpdate = () => {
+    if (statusConfirmation) {
+      updateStatus(
+        statusConfirmation.complaintId,
+        statusConfirmation.newStatus,
+        adminMessages[statusConfirmation.complaintId] || ""
+      );
     }
   };
 
@@ -170,7 +192,7 @@ const assignProvider = async (complaintId, providerId) => {
                           <select
                             className="status-dropdown"
                             value={c.status}
-                            onChange={(e) => updateStatus(c._id, e.target.value)}
+                            onChange={(e) => handleStatusChange(c._id, e.target.value)}
                           >
                             <option value="Pending">Pending</option>
                             <option value="In Progress">In Progress</option>
@@ -202,6 +224,9 @@ const assignProvider = async (complaintId, providerId) => {
                             className="complaint-thumbnail"
                             src={getAssetUrl(c.image[0])}
                             alt="complaint"
+                            style={{ cursor: "pointer" }}
+                            onClick={() => setSelectedImage(c.image[0])}
+                            title="Click to view full image"
                           />
                         ) : (
                           <span>No image</span>
@@ -279,6 +304,130 @@ const assignProvider = async (complaintId, providerId) => {
           </button>
         </div>
       </div>
+
+      {/* IMAGE MODAL */}
+      {selectedImage && (
+        <div
+          className="modal-overlay"
+          onClick={() => setSelectedImage(null)}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.7)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              backgroundColor: "white",
+              padding: "20px",
+              borderRadius: "8px",
+              maxWidth: "90%",
+              maxHeight: "90%",
+              overflow: "auto",
+            }}
+          >
+            <img
+              src={getAssetUrl(selectedImage)}
+              alt="complaint"
+              style={{ maxWidth: "100%", height: "auto" }}
+            />
+            <button
+              onClick={() => setSelectedImage(null)}
+              style={{
+                marginTop: "15px",
+                padding: "10px 20px",
+                backgroundColor: "#dc3545",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* STATUS UPDATE CONFIRMATION MODAL */}
+      {statusConfirmation && (
+        <div
+          className="modal-overlay"
+          onClick={() => setStatusConfirmation(null)}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.7)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              backgroundColor: "white",
+              padding: "30px",
+              borderRadius: "8px",
+              maxWidth: "400px",
+              textAlign: "center",
+            }}
+          >
+            <h2>Update Status</h2>
+            <p style={{ marginBottom: "20px" }}>
+              Are you sure you want to change the status to <strong>{statusConfirmation.newStatus}</strong>?
+            </p>
+            <div
+              style={{
+                display: "flex",
+                gap: "10px",
+                justifyContent: "center",
+              }}
+            >
+              <button
+                onClick={() => setStatusConfirmation(null)}
+                style={{
+                  padding: "10px 20px",
+                  backgroundColor: "#6c757d",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmStatusUpdate}
+                style={{
+                  padding: "10px 20px",
+                  backgroundColor: "#007bff",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                }}
+              >
+                Update
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
