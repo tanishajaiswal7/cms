@@ -1,10 +1,37 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import api from "../../api/axios";
+import { useEffect, useState } from "react";
 import "./Navbar.css";
 
 function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [newComplaintsCount, setNewComplaintsCount] = useState(0);
+
+  // Fetch new complaints count for admin
+  useEffect(() => {
+    if (user?.role === "admin") {
+      const fetchNewComplaints = async () => {
+        try {
+          const res = await api.get("/api/complaints", {
+            params: {
+              status: "Pending",
+            },
+          });
+          setNewComplaintsCount(res.data.data?.length || 0);
+        } catch (error) {
+          // Failed to fetch - keep current count
+        }
+      };
+
+      fetchNewComplaints();
+
+      // Poll for new complaints every 30 seconds
+      const interval = setInterval(fetchNewComplaints, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [user]);
 
   const navLinkClassName = ({ isActive }) =>
     isActive ? "nav-link is-active" : "nav-link";
@@ -32,6 +59,11 @@ function Navbar() {
             </NavLink>
             <NavLink to="/admin/complaints" className={navLinkClassName}>
               Complaints
+              {newComplaintsCount > 0 && (
+                <span className="complaint-badge">
+                  {newComplaintsCount > 99 ? '99+' : newComplaintsCount}
+                </span>
+              )}
             </NavLink>
             <NavLink to="/admin/providers" className={navLinkClassName}>
               Providers
