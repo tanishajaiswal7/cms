@@ -179,6 +179,7 @@ const deleteComplaint = async (req, res) => {
       return res.status(404).json({ message: "Complaint not found" });
     }
 
+    // Check authorization: residents can only delete their own
     if (
       req.user.role === "resident" &&
       complaint.createdBy.toString() !== req.user._id.toString()
@@ -188,9 +189,15 @@ const deleteComplaint = async (req, res) => {
         .json({ message: "Not authorized to delete this complaint" });
     }
 
-    await complaint.deleteOne();
-    res.json({ message: "Complaint deleted successfully" });
+    // Delete the complaint
+    await Complaint.findByIdAndDelete(req.params.id);
+    
+    res.json({ 
+      success: true,
+      message: "Complaint deleted successfully" 
+    });
   } catch (error) {
+    console.error("Delete complaint error:", error);
     res.status(500).json({
       message: "Failed to delete complaint",
       error: error.message,
