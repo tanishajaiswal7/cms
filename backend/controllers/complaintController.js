@@ -189,6 +189,13 @@ const deleteComplaint = async (req, res) => {
         .json({ message: "Not authorized to delete this complaint" });
     }
 
+    // Only allow deleting pending complaints (not resolved/in progress)
+    if (req.user.role === "resident" && complaint.status !== "Pending") {
+      return res.status(400).json({ 
+        message: `Cannot delete ${complaint.status} complaint. Only Pending complaints can be deleted.`
+      });
+    }
+
     // Delete the complaint
     await Complaint.findByIdAndDelete(req.params.id);
     
