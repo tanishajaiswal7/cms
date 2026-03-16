@@ -110,6 +110,27 @@ const loginUser = async (req, res) => {
 };
 
 /* =========================
+   LOGOUT
+========================= */
+const logoutUser = async (req, res) => {
+  try {
+    // Clear refresh token cookie
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+    });
+
+    res.json({
+      success: true,
+      message: "Logged out successfully",
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Logout failed" });
+  }
+};
+
+/* =========================
    REFRESH TOKEN
 ========================= */
 const refreshAccessToken = async (req, res) => {
@@ -189,6 +210,7 @@ const resetPassword = async (req, res) => {
 module.exports = {
   registerUser,
   loginUser,
+  logoutUser,
   refreshAccessToken,
   resetPassword,
 };

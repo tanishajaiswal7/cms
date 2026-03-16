@@ -19,7 +19,7 @@ const createComplaint = async (req, res) => {
       block: req.body.block,
       roomNumber: req.body.roomNumber,
       createdBy: req.user._id,
-      images: req.files ? req.files.map((file) => file.path) : [],
+      image: req.files ? req.files.map((file) => file.path) : [],
     });
 
     // ✅ Respond first

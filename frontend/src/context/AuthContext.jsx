@@ -33,9 +33,15 @@ export const AuthProvider = ({ children }) => {
   };
 
   // logout
-  const logout = () => {
-    localStorage.removeItem("accessToken");
-    setUser(null);
+  const logout = async () => {
+    try {
+      await api.post("/api/auth/logout");
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      localStorage.removeItem("accessToken");
+      setUser(null);
+    }
   };
 
   // try refresh token on app load

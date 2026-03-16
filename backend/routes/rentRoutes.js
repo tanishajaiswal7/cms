@@ -21,6 +21,9 @@ router.post("/", protect, adminOnly, apiLimiter, createRent);
 // GET ALL RENTS (admin only)
 router.get("/", protect, adminOnly, apiLimiter, getAllRents);
 
+// STATISTICS (admin only) - MUST be before /:id routes
+router.get("/stats", protect, adminOnly, apiLimiter, getRentStatistics);
+
 // GET RENT BY RESIDENT
 router.get("/resident/:residentId", protect, apiLimiter, getRentByResident);
 
@@ -35,8 +38,5 @@ router.patch("/:id/status", protect, adminOnly, apiLimiter, updateRentStatus);
 
 // DELETE (admin only)
 router.delete("/:id", protect, adminOnly, apiLimiter, deleteRent);
-
-// STATISTICS (admin only)
-router.get("/stats", protect, adminOnly, apiLimiter, getRentStatistics);
 
 module.exports = router;
