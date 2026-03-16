@@ -30,8 +30,8 @@ api.interceptors.response.use(
     // Handle 401 Unauthorized - token might be expired
     if (error.response?.status === 401) {
       localStorage.removeItem("accessToken");
-      // Optionally redirect to login
-      if (typeof window !== "undefined") {
+      // Only redirect if NOT the refresh endpoint (let AuthContext handle it)
+      if (typeof window !== "undefined" && !error.config?.url?.includes("/auth/refresh")) {
         window.location.href = "/login";
       }
     }
