@@ -89,8 +89,8 @@ const loginUser = async (req, res) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: false,
-      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production", // ✅ true in production
+      sameSite: "lax",                                // ✅ allows cross-site
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
