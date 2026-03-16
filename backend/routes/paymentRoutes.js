@@ -7,6 +7,7 @@ const {
   requestRefund,
 } = require("../controllers/paymentController");
 const { protect } = require("../middlewares/authMiddleware");
+const { paymentLimiter } = require("../middlewares/rateLimiter");
 
 const router = express.Router();
 
@@ -18,10 +19,10 @@ const router = express.Router();
 // Protected routes (require authentication)
 
 // Create payment intent for rent payment
-router.post("/create-intent", protect, createPaymentIntent);
+router.post("/create-intent", protect, paymentLimiter, createPaymentIntent);
 
 // Confirm payment and update rent status
-router.post("/confirm", protect, confirmPayment);
+router.post("/confirm", protect, paymentLimiter, confirmPayment);
 
 // Get payment history for authenticated user
 router.get("/history", protect, getPaymentHistory);

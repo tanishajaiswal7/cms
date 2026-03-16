@@ -6,10 +6,10 @@ const {
   createResident,
   deleteResident,
 } = require("../controllers/residentController");
-const { protect } = require("../middlewares/authMiddleware");
+const { protect, adminOnly } = require("../middlewares/authMiddleware");
 
-router.get("/", protect, listResidents);
-router.post("/", protect, createResident);
-router.delete("/:id", protect, deleteResident);
+router.get("/", protect, adminOnly, listResidents);
+router.post("/", protect, adminOnly, createResident);
+router.delete("/:id", protect, adminOnly, deleteResident);
 
 module.exports = router;

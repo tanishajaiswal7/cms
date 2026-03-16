@@ -52,7 +52,7 @@ Room Number:${complaint.roomNumber}`
         );
       }
     } catch (err) {
-      console.error("Admin WhatsApp failed");
+      // Admin notification failed - continuing with complaint creation
     }
   } catch (error) {
     res.status(500).json({

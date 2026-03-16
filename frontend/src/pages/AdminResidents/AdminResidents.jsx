@@ -29,7 +29,6 @@ function AdminResidents() {
       const response = await axios.get("/api/residents");
       setResidents(response.data.data || []);
     } catch (error) {
-      console.error(error);
       toast.error("Failed to fetch residents");
     } finally {
       setLoading(false);
@@ -81,7 +80,6 @@ function AdminResidents() {
 
       fetchResidents();
     } catch (error) {
-      console.error(error);
       const apiMessage =
         error.response?.data?.message ||
         error.response?.data?.error ||
@@ -98,7 +96,6 @@ function AdminResidents() {
       toast.success("Resident removed from list");
       fetchResidents();
     } catch (error) {
-      console.error(error);
       toast.error(error.response?.data?.message || "Failed to remove resident");
     }
   };

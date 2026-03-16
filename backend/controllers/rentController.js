@@ -71,8 +71,6 @@ const createRent = async (req, res) => {
       data: rent,
     });
   } catch (error) {
-    console.error("CREATE RENT ERROR:", error);
-
     res.status(500).json({
       success: false,
       message: "Error creating rent record",

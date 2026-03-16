@@ -1,8 +1,17 @@
 const errorHandler = (err, req, res, next) => {
-  console.error(err.stack);
+  // Determine status code
+  const statusCode = err.statusCode || err.status || 500;
+  
+  // Don't expose sensitive error details to client in production
+  const message = process.env.NODE_ENV === "production" 
+    ? (statusCode === 500 ? "Internal Server Error" : err.message)
+    : err.message;
 
-  res.status(500).json({
-    message: "Internal Server Error",
+  // Structured error response
+  res.status(statusCode).json({
+    success: false,
+    message: message,
+    ...(process.env.NODE_ENV !== "production" && { error: err.message, stack: err.stack }),
   });
 };
 

@@ -49,8 +49,6 @@ const registerUser = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("REGISTER ERROR 👉", error);
-
     if (error.code === 11000) {
       return res.status(400).json({
         message: "Email already registered",

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import "./Profile.css";
 import Navbar from "../../components/Navbar/Navbar";
+import toast from "react-hot-toast";
 
 function Profile() {
   const [form, setForm] = useState({
@@ -16,31 +17,54 @@ function Profile() {
 
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const res = await api.get("/api/users/me");
-      setForm(res.data);
-      setLoading(false);
+      try {
+        setError(null);
+        const res = await api.get("/api/users/me");
+        setForm(res.data);
+      } catch (err) {
+        const errorMsg = err.response?.data?.message || "Failed to load profile";
+        setError(errorMsg);
+        toast.error(errorMsg);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchProfile();
   }, []);
 
   const saveProfile = async () => {
-    if (form.phone && form.phone.length !== 10) {
-      alert("Phone number must be 10 digits");
-      return;
+    try {
+      // Validation
+      if (form.phone && form.phone.length !== 10) {
+        toast.error("Phone number must be 10 digits");
+        return;
+      }
+
+      if (form.phone && !/^\d+$/.test(form.phone)) {
+        toast.error("Phone number must contain only digits");
+        return;
+      }
+
+      // Save profile
+      await api.put("/api/users/me", {
+        phone: form.phone,
+        address: form.address,
+        buildingName: form.buildingName,
+        roomNo: form.roomNo,
+      });
+
+      toast.success("Profile updated successfully");
+      setEditMode(false);
+      setError(null);
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || "Failed to update profile";
+      setError(errorMsg);
+      toast.error(errorMsg);
     }
-
-    await api.put("/api/users/me", {
-      phone: form.phone,
-      address: form.address,
-      buildingName: form.buildingName,
-      roomNo: form.roomNo,
-    });
-
-    alert("Profile updated successfully");
-    setEditMode(false);
   };
 
   if (loading) {
@@ -64,6 +88,8 @@ function Profile() {
             Your building and room details are used across complaints, resident management, and rent workflows.
           </p>
         </div>
+
+        {error && <p style={{ color: "red", padding: "1rem", marginBottom: "1rem" }}>{error}</p>}
 
         <div className="profile-card">
           <div className="profile-row">

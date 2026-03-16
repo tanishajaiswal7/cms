@@ -58,8 +58,8 @@ function AdminAnalytics() {
         params: { days },
       });
       setTrends(res.data);
-    } catch {
-      console.error("Failed to load trends");
+    } catch (error) {
+      // Failed to fetch trends
     }
   };
 
@@ -84,8 +84,8 @@ useEffect(() => {
         params: { days: alertDays },
       });
       setPendingAlerts(res.data);
-    } catch {
-      console.error("Failed to load pending alerts");
+    } catch (error) {
+      // Failed to fetch pending alerts
     }
   };
 

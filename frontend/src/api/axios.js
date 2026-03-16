@@ -14,14 +14,40 @@ api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("accessToken");
     
-
-if (token && token !== "undefined") {
-  config.headers.Authorization = `Bearer ${token}`;
-}
+    if (token && token !== "undefined") {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
 
     return config;
   },
   (error) => Promise.reject(error)
+);
+
+// Response error interceptor
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Handle 401 Unauthorized - token might be expired
+    if (error.response?.status === 401) {
+      localStorage.removeItem("accessToken");
+      // Optionally redirect to login
+      if (typeof window !== "undefined") {
+        window.location.href = "/login";
+      }
+    }
+
+    // Handle 403 Forbidden
+    if (error.response?.status === 403) {
+      error.message = error.response?.data?.message || "Access denied";
+    }
+
+    // Handle other errors
+    if (!error.response) {
+      error.message = "Network error. Please check your connection.";
+    }
+
+    return Promise.reject(error);
+  }
 );
 
 export default api;

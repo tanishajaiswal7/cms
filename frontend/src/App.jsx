@@ -31,30 +31,7 @@ const getMaskedKey = (key) => {
   return `${key.slice(0, 12)}...${key.slice(-6)}`;
 };
 
-if (!stripePublishableKey) {
-  console.error(
-    "[Stripe] VITE_STRIPE_PUBLISHABLE_KEY is missing. Add it in frontend/.env and restart Vite."
-  );
-} else if (!/^pk_(test|live)_/.test(stripePublishableKey)) {
-  console.error(
-    `[Stripe] Invalid publishable key format loaded: ${getMaskedKey(
-      stripePublishableKey
-    )}. Expected prefix pk_test_ or pk_live_.`
-  );
-} else {
-  console.info(
-    `[Stripe] Publishable key loaded: ${getMaskedKey(stripePublishableKey)}`
-  );
-}
-
-if (
-  typeof rawStripePublishableKey === "string" &&
-  rawStripePublishableKey !== stripePublishableKey
-) {
-  console.warn(
-    "[Stripe] Whitespace detected in VITE_STRIPE_PUBLISHABLE_KEY; trimmed automatically."
-  );
-}
+// Stripe key validation handled silently
 
 const stripePromise = stripePublishableKey ? loadStripe(stripePublishableKey) : null;
 

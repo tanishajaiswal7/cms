@@ -52,7 +52,6 @@ function Complaints() {
 
       navigate("/dashboard");
     } catch (err) {
-      console.error(err.response?.data);
       setError(err.response?.data?.error || "Failed to raise complaint");
     } finally {
       setLoading(false);

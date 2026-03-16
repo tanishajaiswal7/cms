@@ -1,8 +1,6 @@
 const express = require("express");
 const router = express.Router();
 
-
-
 const {
   getComplaintSummary,
   getCategoryDistribution,
@@ -12,6 +10,7 @@ const {
 } = require("../controllers/analyticsController");
 
 const { protect, adminOnly } = require("../middlewares/authMiddleware");
+const { apiLimiter } = require("../middlewares/rateLimiter");
 
 router.get("/summary", protect, adminOnly, getComplaintSummary);
 router.get("/categories", protect, adminOnly, getCategoryDistribution);

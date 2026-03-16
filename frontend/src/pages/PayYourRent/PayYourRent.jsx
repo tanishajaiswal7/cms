@@ -81,7 +81,6 @@ function PayYourRent() {
         setRentData(rent || null);
       }
     } catch (error) {
-      console.error("Error fetching rent data:", error);
       setError(error.response?.data?.message || "Failed to load rent details");
       setRentData(null);
     } finally {

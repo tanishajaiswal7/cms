@@ -6,28 +6,22 @@ const {
   updateComplaintStatus,
   deleteComplaint,
   assignProvider
-
-
 } = require("../controllers/complaintController");
 
 const { protect, adminOnly } = require("../middlewares/authMiddleware");
-const { complaintLimiter } = require("../middlewares/rateLimiter");
-
+const { complaintLimiter, apiLimiter } = require("../middlewares/rateLimiter");
 
 const router = express.Router();
 
-
-
-router.post("/",protect,complaintLimiter,upload.array("images", 5)
-,createComplaint
-);
+router.post("/", protect, complaintLimiter, upload.array("images", 5), createComplaint);
 router.get("/", protect, getAllComplaints);
-router.put("/:id", protect, adminOnly,updateComplaintStatus);
-router.delete("/:id", protect, deleteComplaint);
+router.put("/:id", protect, adminOnly, apiLimiter, updateComplaintStatus);
+router.delete("/:id", protect, adminOnly, apiLimiter, deleteComplaint);
 router.put(
   "/:id/assign",
   protect,
   adminOnly,
+  apiLimiter,
   assignProvider
 );
 

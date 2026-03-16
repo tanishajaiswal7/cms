@@ -16,8 +16,8 @@ function Dashboard() {
     try {
       const res = await api.get("/api/complaints");
       setComplaints(res.data.data);
-    } catch {
-      console.error("Failed to fetch complaints");
+    } catch (error) {
+      // Failed to fetch complaints - continue with empty state
     } finally {
       setLoading(false);
     }

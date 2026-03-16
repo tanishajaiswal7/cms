@@ -33,8 +33,8 @@ function AdminPanel() {
       });
       setComplaints(res.data.data);
       setTotalPages(res.data.totalPages);
-    } catch {
-      console.error("Failed to fetch complaints");
+    } catch (error) {
+      // Failed to fetch complaints - using previous state
     } finally {
       setLoading(false);
     }
@@ -44,8 +44,8 @@ function AdminPanel() {
     try {
       const res = await api.get("/api/providers");
       setProviders(res.data);
-    } catch {
-      console.error("Failed to fetch providers");
+    } catch (error) {
+      // Failed to fetch providers - continuing
     }
   }, []);
 

@@ -14,4 +14,25 @@ const complaintLimiter = rateLimit({
   message: "Too many complaints submitted, slow down",
 });
 
-module.exports = { authLimiter, complaintLimiter };
+// limit for API routes (general)
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // 100 requests per IP
+  message: "Too many requests, please try again later",
+});
+
+// limit for payment routes
+const paymentLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 30, // 30 payment requests per IP
+  message: "Too many payment attempts, please try again later",
+});
+
+// limit for user profile updates
+const profileLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 15, // 15 requests per IP
+  message: "Too many update attempts, please try again later",
+});
+
+module.exports = { authLimiter, complaintLimiter, apiLimiter, paymentLimiter, profileLimiter };

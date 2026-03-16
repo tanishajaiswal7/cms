@@ -13,8 +13,11 @@ A full-stack web application for managing complaints and service providers. The 
 - [Project Structure](#project-structure)
 - [Backend Setup](#backend-setup)
 - [Frontend Setup](#frontend-setup)
+- [Production Deployment](#production-deployment)
+- [Docker Deployment](#docker-deployment)
 - [API Endpoints](#api-endpoints)
 - [Environment Variables](#environment-variables)
+- [Security](#security)
 - [Usage](#usage)
 
 ## ✨ Features
@@ -131,9 +134,10 @@ CMS/
 ## 🚀 Backend Setup
 
 ### Prerequisites
-- Node.js (v14 or higher)
-- MongoDB
-- Twilio account (for WhatsApp)
+- Node.js (v18 or higher recommended)
+- MongoDB (Cloud or Local)
+- Twilio account (for WhatsApp notifications)
+- Stripe account (for payments)
 
 ### Installation
 
@@ -147,31 +151,30 @@ cd backend
 npm install
 ```
 
-3. Create `.env` file in backend directory:
+3. Create `.env` file using `.env.example` as reference:
+```bash
+cp .env.example .env
+```
+
+4. Update `.env` with your actual credentials:
 ```
 PORT=5000
-MONGODB_URI=mongodb://your-mongodb-connection-string
-JWT_SECRET=your-jwt-secret-key
-REFRESH_SECRET=your-refresh-secret-key
 NODE_ENV=development
-CORS_ORIGINS=http://localhost:5173,https://your-frontend-domain.com
-
-# Stripe Configuration
-STRIPE_SECRET_KEY=sk_test_or_live_key
-STRIPE_PUBLISHABLE_KEY=pk_test_or_live_key
+MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/cms_db
+JWT_SECRET=your-long-random-secret-key
+REFRESH_SECRET=your-long-random-refresh-secret
+STRIPE_SECRET_KEY=sk_test_your_stripe_key
+STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_key
 STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
-
-# Twilio Configuration
-TWILIO_ACCOUNT_SID=your-twilio-account-sid
-TWILIO_AUTH_TOKEN=your-twilio-auth-token
-TWILIO_WHATSAPP_NUMBER=your-twilio-whatsapp-number
-
-# Email Configuration
+TWILIO_ACCOUNT_SID=your_twilio_sid
+TWILIO_AUTH_TOKEN=your_twilio_auth_token
+TWILIO_PHONE_NUMBER=+1234567890
 EMAIL_USER=your-email@gmail.com
-EMAIL_PASSWORD=your-app-password
+EMAIL_PASS=your-app-password
+CORS_ORIGINS=http://localhost:3000,http://localhost:5173
 ```
 
-4. Start development server:
+5. Start development server:
 ```bash
 npm run dev
 ```
@@ -186,7 +189,7 @@ The server will run on `http://localhost:5000`
 ## 🎨 Frontend Setup
 
 ### Prerequisites
-- Node.js (v14 or higher)
+- Node.js (v18 or higher recommended)
 
 ### Installation
 
@@ -200,15 +203,24 @@ cd frontend
 npm install
 ```
 
-3. Update API endpoint in `src/api/axios.js` if needed
+3. Create `.env` file using `.env.example` as reference:
+```bash
+cp .env.example .env
+```
 
-4. Create `.env` in `frontend`:
+4. Update `.env` with development credentials:
 ```
 VITE_BACKEND_URL=http://localhost:5000
-VITE_STRIPE_PUBLISHABLE_KEY=pk_test_or_live_key
+VITE_STRIPE_PUBLISHABLE_KEY=pk_test_your_key
 ```
 
-5. Start development server:
+5. For production, create `.env.production`:
+```
+VITE_BACKEND_URL=https://api.yourdomain.com
+VITE_STRIPE_PUBLISHABLE_KEY=pk_live_your_key
+```
+
+6. Start development server:
 ```bash
 npm run dev
 ```
@@ -218,9 +230,117 @@ The application will be available at `http://localhost:5173` (Vite default port)
 ### Build for Production
 ```bash
 npm run build
+npm run preview
 ```
 
-## 📡 API Endpoints
+This generates optimized production build in the `dist/` directory.
+
+## 🌍 Production Deployment
+
+### Pre-Deployment Checklist
+
+1. **Environment Security**
+   - ✅ Never commit `.env` files to git
+   - ✅ Use `.env.example` as reference
+   - ✅ Rotate all credentials in production
+   - ✅ Use secure secret management (AWS Secrets Manager, Azure Key Vault)
+
+2. **Production Configuration**
+   - ✅ Set `NODE_ENV=production`
+   - ✅ Configure `CORS_ORIGINS` with your actual domain
+   - ✅ Use `https://` for all URLs
+   - ✅ Enable Stripe live keys (not test)
+
+3. **Database**
+   - ✅ Use MongoDB Atlas (cloud) for production
+   - ✅ Enable IP whitelisting
+   - ✅ Set up regular backups
+
+### Deploy to Cloud Platforms
+
+#### **Heroku / Render / Railway**
+1. Connect GitHub repository
+2. Set environment variables in platform dashboard
+3. Deploy automatically on git push
+
+#### **AWS / Azure / DigitalOcean**
+1. Use Docker deployment (see Docker Deployment section)
+2. Set up CI/CD pipeline
+3. Configure domain and SSL/TLS
+
+#### **Vercel (Frontend Only)**
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy
+vercel
+```
+
+## 🐳 Docker Deployment
+
+### Prerequisites
+- Docker installed and running
+- Docker Compose (v1.29+)
+
+### Build and Run with Docker
+
+1. Create production `.env` file in `backend/` directory
+
+2. Build images:
+```bash
+docker-compose build
+```
+
+3. Start services:
+```bash
+docker-compose up -d
+```
+
+4. View logs:
+```bash
+docker-compose logs -f
+```
+
+5. Stop services:
+```bash
+docker-compose down
+```
+
+### Docker Services Configuration
+
+**Backend Service**
+- Port: 5000
+- Health Check: Every 30 seconds
+- Restart: Unless stopped
+- Resource Limits: 1 CPU, 512MB RAM
+
+**Frontend Service**
+- Port: 80 (HTTP)
+- Health Check: Every 30 seconds
+- Restart: Unless stopped
+- Resource Limits: 0.5 CPU, 256MB RAM
+
+### Production Docker Deployment
+
+For hosting environments:
+
+```bash
+# Build with specific tag
+docker build -t cms-backend:1.0 ./backend
+docker build -t cms-frontend:1.0 ./frontend
+
+# Push to registry (e.g., Docker Hub)
+docker push username/cms-backend:1.0
+docker push username/cms-frontend:1.0
+
+# Deploy using docker-compose.yml
+docker-compose up -d
+```
+
+### Health Check Endpoints
+- Backend: `http://localhost:5000/api/health/stripe`
+- Frontend: `http://localhost/health`
 
 ### Authentication (`/api/auth`)
 - `POST /register` - Register new user
@@ -253,25 +373,83 @@ npm run build
 
 ## 🔐 Environment Variables
 
-### Backend
-- `PORT` - Server port (default: 5000)
-- `MONGODB_URI` - MongoDB connection string
-- `JWT_SECRET` - JWT signing secret
-- `REFRESH_SECRET` - Refresh token secret
-- `NODE_ENV` - Environment (development/production)
-- `CORS_ORIGINS` - Comma-separated allowed frontend origins
-- `STRIPE_SECRET_KEY` - Stripe secret key
-- `STRIPE_PUBLISHABLE_KEY` - Stripe publishable key
-- `STRIPE_WEBHOOK_SECRET` - Stripe webhook signing secret
-- `TWILIO_ACCOUNT_SID` - Twilio account ID
-- `TWILIO_AUTH_TOKEN` - Twilio authentication token
-- `TWILIO_WHATSAPP_NUMBER` - Twilio WhatsApp number
-- `EMAIL_USER` - Email service username
-- `EMAIL_PASSWORD` - Email service password
+### Backend Variables
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `PORT` | No | Server port (default: 5000) |
+| `NODE_ENV` | Yes | development or production |
+| `MONGO_URI` | Yes | MongoDB connection string |
+| `JWT_SECRET` | Yes | JWT signing secret (min 32 chars) |
+| `REFRESH_SECRET` | Yes | Refresh token secret (min 32 chars) |
+| `STRIPE_SECRET_KEY` | Yes | Stripe secret API key (sk_*) |
+| `STRIPE_PUBLISHABLE_KEY` | Yes | Stripe publishable key (pk_*) |
+| `STRIPE_WEBHOOK_SECRET` | Yes | Stripe webhook signing secret (whsec_*) |
+| `TWILIO_ACCOUNT_SID` | Yes | Twilio account identifier |
+| `TWILIO_AUTH_TOKEN` | Yes | Twilio authentication token |
+| `TWILIO_PHONE_NUMBER` | Yes | Phone number for Twilio (international format) |
+| `EMAIL_USER` | Yes | Email address for sending emails |
+| `EMAIL_PASS` | Yes | Email service password/app token |
+| `CORS_ORIGINS` | Yes | Comma-separated allowed origins (production URLs) |
+| `MAX_FILE_SIZE` | No | Max upload size in bytes (default: 5242880 = 5MB) |
 
-### Frontend
-- `VITE_BACKEND_URL` - Backend API base URL
-- `VITE_STRIPE_PUBLISHABLE_KEY` - Stripe publishable key for client-side checkout
+### Frontend Variables
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `VITE_BACKEND_URL` | Yes | Backend API base URL |
+| `VITE_STRIPE_PUBLISHABLE_KEY` | Yes | Stripe publishable key (pk_*) |
+
+## 🔒 Security
+
+### Implemented Security Features
+
+✅ **Authentication & Authorization**
+- JWT-based authentication with access & refresh tokens
+- Role-based access control (admin/resident)
+- Protected routes with middleware validation
+- Secure password hashing with bcryptjs
+
+✅ **Rate Limiting**
+- Auth endpoints: 10 requests/15 minutes
+- API endpoints: 100 requests/15 minutes
+- Payment endpoints: 30 requests/15 minutes
+- Profile updates: 15 requests/15 minutes
+
+✅ **File Upload Security**
+- Image file types only (JPEG, PNG, GIF)
+- Max file size: 5MB
+- Filename sanitization to prevent directory traversal
+- Stored in isolated uploads directory
+
+✅ **CORS Protection**
+- Configurable allowed origins
+- Credentials enabled for authenticated requests
+- Methods: GET, POST, PUT, DELETE, OPTIONS
+
+✅ **Error Handling**
+- Generic error messages in production (no stack traces)
+- Detailed logs for debugging in development
+- Structured error responses
+
+✅ **Data Protection**
+- HTTPS/TLS in production (enforced)
+- No sensitive data in logs or client-side code
+- Environment variables for all secrets
+
+✅ **Database Security**
+- MongoDB connection retry logic
+- Timeout handling
+- Connection pooling
+
+### Security Best Practices
+
+1. **Never commit credentials** - Use `.env.example` only
+2. **Rotate secrets regularly** - Especially after deployment
+3. **Use HTTPS in production** - Always
+4. **Enable MFA** - For admin/sensitive accounts
+5. **Monitor logs** - Set up logging to external service
+6. **Regular updates** - Keep dependencies up to date
+7. **API rate limiting** - Prevent abuse
+8. **Input validation** - Server-side validation on all endpoints
 
 ## 💻 Usage
 
@@ -297,12 +475,58 @@ npm run build
 4. Protected routes verified via JWT middleware
 5. Refresh token used to get new access token when expired
 
-## 📝 Notes
+## 📝 Notes & Additional Information
 
-- Each functionality has a separate file in controllers, models, and routes
+### Project Structure
+- Each functionality has separate files in `controllers/`, `models/`, and `routes/`
 - Passwords are hashed using bcryptjs before storage
 - WhatsApp notifications sent via Twilio API
-- Rate limiting applied to prevent abuse
-- CORS configured for frontend domain
-- Morgan logs all HTTP requests
+- Rate limiting applied to prevent abuse and DDoS attacks
+- CORS configured for multiple frontend domains
+- Morgan logs HTTP requests (combined format in production)
 - Error handling middleware manages exceptions globally
+- File uploads stored in `backend/uploads/` with size limits
+
+### Production Optimizations
+- ✅ Morgan logging configured for production
+- ✅ Database connection with retry logic (5 attempts)
+- ✅ Docker health checks for both services
+- ✅ Nginx configuration with gzip compression
+- ✅ Security headers (X-Frame-Options, CSP, etc.)
+- ✅ Resource limits in docker-compose
+- ✅ Non-root user in backend Docker container
+- ✅ SPA routing support for React Router
+- ✅ Static asset caching (1 year)
+- ✅ All console.log statements removed
+
+### Monitoring & Maintenance
+
+**Recommended Tools:**
+- Sentry for error tracking
+- Datadog or New Relic for performance monitoring
+- MongoDB Atlas monitoring for database
+- CloudFlare or similar for CDN & DDoS protection
+
+**Log Locations:**
+- Backend: `STDOUT` (view with `docker-compose logs`)
+- Frontend: Browser console (development only)
+
+### Troubleshooting
+
+**Backend won't start:**
+- Check `MONGO_URI` is correct
+- Verify all environment variables are set
+- Check port 5000 isn't in use
+
+**Frontend API calls failing:**
+- Verify `VITE_BACKEND_URL` is correct
+- Check CORS_ORIGINS in backend .env
+- Ensure backend is running
+
+**Docker issues:**
+- Run `docker-compose logs` for detailed errors
+- Clear containers: `docker-compose down -v`
+- Rebuild: `docker-compose build --no-cache`
+
+### Support
+For issues or questions, create a GitHub issue or contact the development team.

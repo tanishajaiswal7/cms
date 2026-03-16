@@ -26,10 +26,9 @@ const handleWebhookEvent = async (event) => {
         break;
 
       default:
-        console.log(`Unhandled event type: ${event.type}`);
+        // Unhandled event type
     }
   } catch (error) {
-    console.error("Error handling webhook event:", error);
     throw error;
   }
 };
@@ -44,7 +43,7 @@ const handlePaymentSucceeded = async (paymentIntent) => {
       paymentIntent;
     const { rentId, residentId } = metadata;
 
-    console.log(`Processing successful payment: ${paymentIntentId}`);
+    // Processing successful payment
 
     // Find or create payment record
     let payment = await Payment.findByPaymentIntentId(paymentIntentId);
@@ -84,13 +83,12 @@ const handlePaymentSucceeded = async (paymentIntent) => {
         rent.paidAt = new Date();
         rent.paidDate = new Date();
         await rent.save();
-        console.log(`Rent ${rentId} marked as paid`);
+        // Rent marked as paid
       }
     }
 
-    console.log(`Payment ${paymentIntentId} processed successfully`);
+    // Payment processed successfully
   } catch (error) {
-    console.error("Error handling payment_intent.succeeded:", error);
     throw error;
   }
 };
@@ -105,7 +103,7 @@ const handlePaymentFailed = async (paymentIntent) => {
       paymentIntent;
     const { rentId, residentId } = metadata;
 
-    console.log(`Processing failed payment: ${paymentIntentId}`);
+    // Processing failed payment
 
     // Find or create payment record
     let payment = await Payment.findByPaymentIntentId(paymentIntentId);
@@ -130,9 +128,8 @@ const handlePaymentFailed = async (paymentIntent) => {
       });
     }
 
-    console.log(`Payment ${paymentIntentId} marked as failed: ${failureReason}`);
+    // Payment marked as failed
   } catch (error) {
-    console.error("Error handling payment_intent.payment_failed:", error);
     throw error;
   }
 };
@@ -147,7 +144,7 @@ const handleChargeRefunded = async (charge) => {
     const refundAmount = stripeConfig.getAmountInRupees(charge.amount_refunded);
     const { rentId, residentId } = charge.metadata;
 
-    console.log(`Processing refund for charge: ${chargeId}`);
+    // Processing refund
 
     // Find payment by charge ID
     let payment = await Payment.findOne({ chargeId });
@@ -163,7 +160,7 @@ const handleChargeRefunded = async (charge) => {
           stripeConfig.getAmountInRupees(refund.amount),
           refund.reason || "Customer requested"
         );
-        console.log(`Payment ${payment.paymentIntentId} refunded`);
+        // Payment refunded
 
         // If this was a rent payment, reset rent status
         if (rentId) {
@@ -175,13 +172,12 @@ const handleChargeRefunded = async (charge) => {
             rent.paidAt = null;
             rent.paidDate = null;
             await rent.save();
-            console.log(`Rent ${rentId} status reset to unpaid due to refund`);
+            // Rent status reset to unpaid
           }
         }
       }
     }
   } catch (error) {
-    console.error("Error handling charge.refunded:", error);
     throw error;
   }
 };
@@ -192,11 +188,8 @@ const handleChargeRefunded = async (charge) => {
  */
 const handleChargeDispute = async (dispute) => {
   try {
-    console.log(`Dispute created for charge ${dispute.charge}:`, dispute);
-    // Log the dispute for admin review
-    // You can implement email notification or admin dashboard alerts here
+    // Dispute created - admin should review
   } catch (error) {
-    console.error("Error handling charge.dispute.created:", error);
     throw error;
   }
 };
@@ -215,11 +208,8 @@ const processWebhook = async (req, res) => {
     res.json({ received: true });
   } catch (error) {
     if (error instanceof Error && error.type === "StripeSignatureVerificationError") {
-      console.error("Webhook signature verification failed:", error.message);
       return res.status(400).send(`Webhook Error: ${error.message}`);
     }
-
-    console.error("Webhook processing error:", error);
     res.status(500).json({
       success: false,
       message: "Webhook processing failed",

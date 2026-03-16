@@ -43,7 +43,6 @@ function AdminRentManagement() {
       const response = await axios.get(`/api/rents?${params.toString()}`);
       setRentRecords(response.data.data || []);
     } catch (error) {
-      console.error(error);
       toast.error("Failed to fetch rent records");
     } finally {
       setLoading(false);
@@ -55,7 +54,6 @@ function AdminRentManagement() {
       const response = await axios.get("/api/residents");
       setResidents(response.data.data || []);
     } catch (error) {
-      console.error(error);
       toast.error("Failed to fetch residents");
     }
   }, []);

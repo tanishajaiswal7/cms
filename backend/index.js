@@ -25,6 +25,16 @@ connectDB();
 const PORT = Number(process.env.PORT) || 5000;
 
 // ======================
+// ENVIRONMENT VALIDATION
+// ======================
+const requiredEnvVars = ["MONGO_URI", "JWT_SECRET", "REFRESH_SECRET"];
+const missingEnvVars = requiredEnvVars.filter((env) => !process.env[env]);
+
+if (missingEnvVars.length > 0) {
+  throw new Error(`Missing required environment variables: ${missingEnvVars.join(", ")}`);
+}
+
+// ======================
 // MIDDLEWARES
 // ======================
 app.post(
@@ -34,16 +44,18 @@ app.post(
 );
 
 app.use(express.json());
-const defaultAllowedOrigins = [
-  "http://localhost:3000",
-  "http://localhost:5173",
-  "https://cms-beta-one.vercel.app",
-];
 
-const envAllowedOrigins = (process.env.CORS_ORIGINS || process.env.CORS_ORIGIN || "")
+// CORS Configuration - use environment variables in production
+const envAllowedOrigins = (process.env.CORS_ORIGINS || "")
   .split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);
+
+// Fallback to localhost for development only
+const defaultAllowedOrigins = process.env.NODE_ENV === "production" ? [] : [
+  "http://localhost:3000",
+  "http://localhost:5173",
+];
 
 const allowedOrigins = envAllowedOrigins.length
   ? envAllowedOrigins
@@ -63,7 +75,8 @@ app.use(
   })
 );
 
-app.use(morgan("dev"));
+// Morgan logging - use combined format in production
+app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 app.use(cookieParser());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
@@ -128,5 +141,5 @@ app.use("/api/admin/payments", adminPaymentRoutes);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`Server started on port ${PORT}`);
+  // Server listening
 });

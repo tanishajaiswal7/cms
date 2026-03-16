@@ -100,7 +100,6 @@ function PaymentForm({ rentId, amount, onSuccess, onCancel }) {
         throw new Error(`Payment status: ${paymentIntent.status}`);
       }
     } catch (err) {
-      console.error("Payment error:", err);
       const errorMessage =
         err.response?.data?.message ||
         err.message ||

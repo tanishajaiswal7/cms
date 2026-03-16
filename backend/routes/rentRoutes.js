@@ -12,30 +12,31 @@ const {
   getRentStatistics,
 } = require("../controllers/rentController");
 
-const { protect } = require("../middlewares/authMiddleware");
+const { protect, adminOnly } = require("../middlewares/authMiddleware");
+const { apiLimiter } = require("../middlewares/rateLimiter");
 
-// CREATE RENT
-router.post("/", protect, createRent);
+// CREATE RENT (admin only)
+router.post("/", protect, adminOnly, apiLimiter, createRent);
 
-// GET ALL RENTS
-router.get("/", protect, getAllRents);
+// GET ALL RENTS (admin only)
+router.get("/", protect, adminOnly, apiLimiter, getAllRents);
 
 // GET RENT BY RESIDENT
-router.get("/resident/:residentId", protect, getRentByResident);
+router.get("/resident/:residentId", protect, apiLimiter, getRentByResident);
 
-// CURRENT MONTH
-router.get("/current-month", protect, getCurrentMonthRent);
+// CURRENT MONTH (user can check their own)
+router.get("/current-month", protect, apiLimiter, getCurrentMonthRent);
 
-// UPDATE RENT
-router.put("/:id", protect, updateRent);
+// UPDATE RENT (admin only)
+router.put("/:id", protect, adminOnly, apiLimiter, updateRent);
 
-// UPDATE STATUS
-router.patch("/:id/status", protect, updateRentStatus);
+// UPDATE STATUS (admin only)
+router.patch("/:id/status", protect, adminOnly, apiLimiter, updateRentStatus);
 
-// DELETE
-router.delete("/:id", protect, deleteRent);
+// DELETE (admin only)
+router.delete("/:id", protect, adminOnly, apiLimiter, deleteRent);
 
-// STATISTICS
-router.get("/stats", protect, getRentStatistics);
+// STATISTICS (admin only)
+router.get("/stats", protect, adminOnly, apiLimiter, getRentStatistics);
 
 module.exports = router;
