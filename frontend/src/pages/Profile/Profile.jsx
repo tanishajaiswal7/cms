@@ -9,6 +9,8 @@ function Profile() {
     email: "",
     phone: "",
     address: "",
+    buildingName: "",
+    roomNo: "",
     role: "",
   });
 
@@ -33,6 +35,8 @@ function Profile() {
     await api.put("/api/users/me", {
       phone: form.phone,
       address: form.address,
+      buildingName: form.buildingName,
+      roomNo: form.roomNo,
     });
 
     alert("Profile updated successfully");
@@ -53,10 +57,15 @@ function Profile() {
       <Navbar />
 
       <div className="profile-container">
-        <h2>My Profile</h2>
+        <div className="page-intro profile-intro">
+          <span className="page-kicker">Account Details</span>
+          <h2 className="page-title">Keep your resident profile accurate.</h2>
+          <p className="page-subtitle">
+            Your building and room details are used across complaints, resident management, and rent workflows.
+          </p>
+        </div>
 
         <div className="profile-card">
-          {/* READ ONLY FIELDS */}
           <div className="profile-row">
             <label>Name</label>
             <input value={form.name} disabled />
@@ -72,7 +81,6 @@ function Profile() {
             <input value={form.role} disabled />
           </div>
 
-          {/* EDITABLE FIELDS */}
           <div className="profile-row">
             <label>Phone</label>
             <input
@@ -98,7 +106,30 @@ function Profile() {
             />
           </div>
 
-          {/* ACTION BUTTONS */}
+          <div className="profile-row">
+            <label>Building Name</label>
+            <input
+              value={form.buildingName || ""}
+              disabled={!editMode}
+              placeholder="e.g. Block A, Tower 2"
+              onChange={(e) =>
+                setForm({ ...form, buildingName: e.target.value })
+              }
+            />
+          </div>
+
+          <div className="profile-row">
+            <label>Room / Flat No</label>
+            <input
+              value={form.roomNo || ""}
+              disabled={!editMode}
+              placeholder="e.g. 101, 4B"
+              onChange={(e) =>
+                setForm({ ...form, roomNo: e.target.value })
+              }
+            />
+          </div>
+
           {!editMode ? (
             <button onClick={() => setEditMode(true)}>
               Edit Profile

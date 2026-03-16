@@ -50,6 +50,18 @@ const userSchema = new mongoose.Schema(
       maxlength: [200, "Address too long"],
     },
 
+    buildingName: {
+      type: String,
+      trim: true,
+      maxlength: [100, "Building name too long"],
+    },
+
+    roomNo: {
+      type: String,
+      trim: true,
+      maxlength: [20, "Room number too long"],
+    },
+
     image: {
       type: String, // cloudinary / local path
     },

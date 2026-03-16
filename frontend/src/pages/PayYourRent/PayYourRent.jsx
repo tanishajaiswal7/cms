@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../../context/AuthContext";
 import axios from "../../api/axios";
 import Navbar from "../../components/Navbar/Navbar";
@@ -13,15 +13,44 @@ function PayYourRent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [stripeHealthWarning, setStripeHealthWarning] = useState(null);
   const residentUserId = user?._id || user?.id;
 
   useEffect(() => {
-    if (residentUserId) {
-      fetchRentData();
-    }
-  }, [selectedMonth, residentUserId]);
+    checkStripeHealth();
+  }, []);
 
-  const fetchRentData = async () => {
+  const checkStripeHealth = async () => {
+    try {
+      const response = await axios.get("/api/health/stripe");
+      const healthData = response?.data?.data;
+
+      if (!healthData?.stripeConfigured) {
+        const firstWarning = healthData?.warnings?.[0];
+        setStripeHealthWarning(
+          firstWarning || "Payment service is not configured. Please contact admin."
+        );
+        return;
+      }
+
+      setStripeHealthWarning(null);
+    } catch (stripeHealthError) {
+      const status = stripeHealthError?.response?.status;
+
+      if (status === 404) {
+        setStripeHealthWarning(
+          "Payment health check endpoint not found. Restart backend server and try again."
+        );
+        return;
+      }
+
+      setStripeHealthWarning(
+        "Unable to verify payment service configuration. Please try again later."
+      );
+    }
+  };
+
+  const fetchRentData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -58,7 +87,13 @@ function PayYourRent() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [residentUserId, selectedMonth]);
+
+  useEffect(() => {
+    if (residentUserId) {
+      fetchRentData();
+    }
+  }, [fetchRentData, residentUserId]);
 
   const handlePaymentSuccess = () => {
     setShowPaymentForm(false);
@@ -70,10 +105,35 @@ function PayYourRent() {
       <Navbar />
 
       <div className="pay-rent-container">
+        <div className="pay-rent-header-block">
+          <div className="pay-rent-header">
+            <div className="page-intro pay-rent-intro">
+              <span className="page-kicker">Resident Payments</span>
+              <h1 className="page-title">Review your monthly rent and complete payment securely.</h1>
+              <p className="page-subtitle">
+                Check the selected month, confirm the amount due, and pay through the integrated Stripe checkout flow.
+              </p>
+            </div>
+          </div>
 
-        <div className="pay-rent-header">
-          <h1>💰 Pay Your Rent</h1>
-          <p className="subtitle">View and pay your monthly rent</p>
+          <section className="insight-strip rent-summary-strip">
+            <article className="insight-tile">
+              <span className="insight-label">Available Months</span>
+              <strong className="insight-value">{allRents.length}</strong>
+            </article>
+            <article className="insight-tile">
+              <span className="insight-label">Selected</span>
+              <strong className="insight-value rent-insight-status">
+                {selectedMonth === "current" ? "Current" : selectedMonth}
+              </strong>
+            </article>
+            <article className="insight-tile">
+              <span className="insight-label">Status</span>
+              <strong className="insight-value rent-insight-status">
+                {rentData?.status || "No Record"}
+              </strong>
+            </article>
+          </section>
         </div>
 
         {/* Month Selector */}
@@ -115,6 +175,12 @@ function PayYourRent() {
           </div>
         )}
 
+        {stripeHealthWarning && (
+          <div className="error-alert">
+            ⚠️ {stripeHealthWarning}
+          </div>
+        )}
+
         {/* Rent Details */}
 
         {!loading && rentData && (
@@ -131,6 +197,16 @@ function PayYourRent() {
                 <p>{user?.email}</p>
               </div>
 
+            </div>
+
+            <div className="status-section">
+              <span className={`status-badge status-${rentData.status}`}>
+                {rentData.status}
+              </span>
+
+              <p className="due-date">
+                Due date: {rentData.dueDate ? new Date(rentData.dueDate).toLocaleDateString("en-IN") : "Not specified"}
+              </p>
             </div>
 
             {/* Breakdown */}
@@ -181,6 +257,7 @@ function PayYourRent() {
 
                   <button
                     className="btn-pay-now"
+                    disabled={Boolean(stripeHealthWarning)}
                     onClick={() => setShowPaymentForm(true)}
                   >
                     💳 Pay Now

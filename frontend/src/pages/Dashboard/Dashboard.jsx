@@ -2,18 +2,21 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import api from "../../api/axios";
+import { getAssetUrl } from "../../utils/assetUrl";
 import "./Dashboard.css";
 import toast from "react-hot-toast";
 
 function Dashboard() {
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
+  const resolvedCount = complaints.filter((item) => item.status === "Resolved").length;
+  const activeCount = complaints.filter((item) => item.status !== "Resolved").length;
 
   const fetchComplaints = async () => {
     try {
       const res = await api.get("/api/complaints");
       setComplaints(res.data.data);
-    } catch (error) {
+    } catch {
       console.error("Failed to fetch complaints");
     } finally {
       setLoading(false);
@@ -31,7 +34,7 @@ function Dashboard() {
       await api.delete(`/api/complaints/${id}`);
       toast.success("Complaint deleted");
       fetchComplaints();
-    } catch (error) {
+    } catch {
       toast.error("Failed to delete complaint");
     }
   };
@@ -41,21 +44,43 @@ function Dashboard() {
       <Navbar />
 
       <div className="dashboard-container">
-        {/* HEADER */}
-        <div className="dashboard-header">
-          <h1>Your Complaints</h1>
-          <Link to="/complaints/new" className="raise-btn">
-            + Raise Complaint
-          </Link>
-        </div>
+        <section className="dashboard-header-block">
+          <div className="dashboard-header">
+            <div className="page-intro dashboard-intro">
+              <span className="page-kicker">Resident Portal</span>
+              <h1 className="page-title">Track your complaints and follow every update.</h1>
+              <p className="page-subtitle">
+                Review active issues, view admin responses, and raise a new complaint whenever your property needs support.
+              </p>
+            </div>
 
-        {/* STATES */}
+            <Link to="/complaints/new" className="raise-btn">
+              Raise Complaint
+            </Link>
+          </div>
+
+          <div className="insight-strip dashboard-insights">
+            <article className="insight-tile">
+              <span className="insight-label">Total</span>
+              <strong className="insight-value">{complaints.length}</strong>
+            </article>
+            <article className="insight-tile">
+              <span className="insight-label">Active</span>
+              <strong className="insight-value">{activeCount}</strong>
+            </article>
+            <article className="insight-tile">
+              <span className="insight-label">Resolved</span>
+              <strong className="insight-value">{resolvedCount}</strong>
+            </article>
+          </div>
+        </section>
+
         {loading ? (
-          <p>Loading complaints...</p>
+          <div className="loading-panel">Loading your complaint timeline...</div>
         ) : complaints.length === 0 ? (
           <div className="empty-state">
             <p>You haven’t raised any complaints yet.</p>
-            <p>Click “Raise Complaint” to get started.</p>
+            <p>Create your first ticket to start tracking issue progress.</p>
           </div>
         ) : (
           <div className="complaints-list">
@@ -134,7 +159,7 @@ function Dashboard() {
                     {c.images.map((img, idx) => (
                       <img
                         key={idx}
-                        src={`http://localhost:5000/${img}`}
+                        src={getAssetUrl(img)}
                         alt="complaint"
                       />
                     ))}

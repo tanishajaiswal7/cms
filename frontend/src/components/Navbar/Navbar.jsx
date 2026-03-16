@@ -1,10 +1,13 @@
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import "./Navbar.css";
 
 function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+
+  const navLinkClassName = ({ isActive }) =>
+    isActive ? "nav-link is-active" : "nav-link";
 
   const handleLogout = () => {
     logout();
@@ -13,40 +16,63 @@ function Navbar() {
 
   return (
     <nav className="navbar">
-      {/* LEFT */}
       <div className="navbar-left">
-        <h2 className="logo">ResolveX</h2>
+        <div className="brand-lockup" onClick={() => navigate(user?.role === "admin" ? "/admin" : "/dashboard") }>
+          <div className="brand-mark">RX</div>
+          <div className="brand-copy">
+            <h2 className="logo">ResolveX</h2>
+            <span className="brand-tagline">Complaint Management Suite</span>
+          </div>
+        </div>
 
-        {/* ADMIN LINKS */}
         {user?.role === "admin" && (
           <div className="nav-links">
-            <Link to="/admin">Home</Link>
-            <Link to="/admin/complaints">Complaints</Link>
-            <Link to="/admin/providers">Providers</Link>
-            <Link to="/admin/rent">Rent Management</Link>
-            <Link to="/admin/analytics">Analytics</Link>
+            <NavLink to="/admin" className={navLinkClassName} end>
+              Home
+            </NavLink>
+            <NavLink to="/admin/complaints" className={navLinkClassName}>
+              Complaints
+            </NavLink>
+            <NavLink to="/admin/providers" className={navLinkClassName}>
+              Providers
+            </NavLink>
+            <NavLink to="/admin/residents" className={navLinkClassName}>
+              Residents
+            </NavLink>
+            <NavLink to="/admin/rent" className={navLinkClassName}>
+              Rent
+            </NavLink>
+            <NavLink to="/admin/analytics" className={navLinkClassName}>
+              Analytics
+            </NavLink>
           </div>
         )}
 
-        {/* RESIDENT LINKS */}
         {user?.role === "resident" && (
           <div className="nav-links">
-  
-            <Link to="/dashboard">My Complaints</Link>
-            <Link to="/complaints/new">Raise Complaint</Link>
-            <Link to="/pay-rent">Pay Your Rent</Link>
+            <NavLink to="/dashboard" className={navLinkClassName}>
+              My Complaints
+            </NavLink>
+            <NavLink to="/complaints/new" className={navLinkClassName}>
+              Raise Complaint
+            </NavLink>
+            <NavLink to="/pay-rent" className={navLinkClassName}>
+              Rent Payments
+            </NavLink>
           </div>
         )}
       </div>
 
-      {/* RIGHT */}
       <div className="navbar-right">
         {user && (
           <>
+            <span className="role-pill">
+              {user.role === "admin" ? "Admin Desk" : "Resident Portal"}
+            </span>
             <span className="user-name">Hi, {user.name}</span>
-            <Link to="/profile" className="profile-link">
+            <NavLink to="/profile" className="profile-link">
               Profile
-            </Link>
+            </NavLink>
             <button onClick={handleLogout}>Logout</button>
           </>
         )}

@@ -64,7 +64,13 @@ function Complaints() {
       <Navbar />
 
       <div className="complaint-container">
-        <h2>Raise a Complaint</h2>
+        <div className="page-intro complaint-intro">
+          <span className="page-kicker">New Ticket</span>
+          <h2 className="page-title">Raise a complaint with clear location and issue details.</h2>
+          <p className="page-subtitle">
+            Provide the exact unit, category, and supporting photos so the admin team can route your issue faster.
+          </p>
+        </div>
 
         {error && <p className="error">{error}</p>}
 

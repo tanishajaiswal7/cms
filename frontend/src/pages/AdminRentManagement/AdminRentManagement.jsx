@@ -1,12 +1,11 @@
-import { useState, useEffect } from "react";
-import { useAuth } from "../../context/AuthContext";
+import { useState, useEffect, useCallback } from "react";
+import { Link } from "react-router-dom";
 import axios from "../../api/axios";
 import Navbar from "../../components/Navbar/Navbar";
 import toast from "react-hot-toast";
 import "./AdminRentManagement.css";
 
 function AdminRentManagement() {
-  const { user } = useAuth();
   const [rentRecords, setRentRecords] = useState([]);
   const [residents, setResidents] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -29,15 +28,10 @@ function AdminRentManagement() {
     notes: "",
   });
 
-  useEffect(() => {
-    fetchResidents();
-  }, []);
+  const paidCount = rentRecords.filter((record) => record.status === "paid").length;
+  const pendingCount = rentRecords.filter((record) => record.status !== "paid").length;
 
-  useEffect(() => {
-    fetchRentRecords();
-  }, [searchFilter]);
-
-  const fetchRentRecords = async () => {
+  const fetchRentRecords = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -54,17 +48,25 @@ function AdminRentManagement() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchFilter]);
 
-  const fetchResidents = async () => {
+  const fetchResidents = useCallback(async () => {
     try {
-      const response = await axios.get("/api/users/residents");
+      const response = await axios.get("/api/residents");
       setResidents(response.data.data || []);
     } catch (error) {
       console.error(error);
       toast.error("Failed to fetch residents");
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchResidents();
+  }, [fetchResidents]);
+
+  useEffect(() => {
+    fetchRentRecords();
+  }, [fetchRentRecords]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -111,17 +113,16 @@ function AdminRentManagement() {
       const additionalCharges = parseFloat(formData.additionalCharges || 0);
       const fine = parseFloat(formData.fine || 0);
 
-      // const totalAmount = rentAmount + additionalCharges + fine;
+      const rentData = {
+        residentId: formData.residentId,
+        rentAmount,
+        additionalCharges,
+        fine,
+        month: formData.month,
+        dueDate: formData.dueDate || null,
+        notes: formData.notes || "",
+      };
 
-  const rentData = {
-  residentId: formData.residentId,
-  rentAmount,
-  additionalCharges,
-  fine,
-  month: formData.month,
-  dueDate: formData.dueDate || null,
-  notes: formData.notes || "",
-};
       if (editingId) {
         await axios.put(`/api/rents/${editingId}`, rentData);
         toast.success("Rent updated successfully");
@@ -178,7 +179,7 @@ function AdminRentManagement() {
       await axios.delete(`/api/rents/${id}`);
       toast.success("Rent deleted");
       fetchRentRecords();
-    } catch (error) {
+    } catch {
       toast.error("Delete failed");
     }
   };
@@ -195,82 +196,169 @@ function AdminRentManagement() {
 
       <div className="admin-rent-container">
         <div className="rent-header">
-          <h1>📋 Rent Management</h1>
+          <div className="page-intro rent-intro">
+            <span className="page-kicker">Rent Operations</span>
+            <h1 className="page-title">Create, filter, and maintain monthly rent records.</h1>
+            <p className="page-subtitle">
+              Use the resident directory as the single source of truth, then manage monthly rent, charges, fines, and due dates from one screen.
+            </p>
+          </div>
 
-          <button
-            className="btn-add-rent"
-            onClick={() => setShowForm(!showForm)}
-          >
-            {showForm ? "Cancel" : "+ Add Rent"}
-          </button>
+          <div className="header-actions">
+            <Link className="btn-add-rent btn-outline" to="/admin/residents">
+              Manage Residents
+            </Link>
+
+            <button
+              className="btn-add-rent"
+              onClick={() => setShowForm(!showForm)}
+            >
+              {showForm ? "Close Form" : "+ Add Rent"}
+            </button>
+          </div>
         </div>
+
+        <section className="insight-strip rent-insights">
+          <article className="insight-tile">
+            <span className="insight-label">Visible Records</span>
+            <strong className="insight-value">{rentRecords.length}</strong>
+          </article>
+          <article className="insight-tile">
+            <span className="insight-label">Paid</span>
+            <strong className="insight-value">{paidCount}</strong>
+          </article>
+          <article className="insight-tile">
+            <span className="insight-label">Pending</span>
+            <strong className="insight-value">{pendingCount}</strong>
+          </article>
+        </section>
+
+        {/* <div className="instruction-card">
+          <h3>How to fill rent form correctly</h3>
+          <ol>
+            <li>First add/select resident from Resident Master.</li>
+            <li>Choose month in <strong>YYYY-MM</strong> format.</li>
+            <li>Enter base rent, then optional charges/fine.</li>
+            <li>Set due date and notes, then verify total before save.</li>
+          </ol>
+        </div> */}
 
         {showForm && (
           <div className="rent-form-card">
-            <h2>{editingId ? "Edit Rent" : "Add Rent"}</h2>
+            <div className="section-title-row">
+              <h2>{editingId ? "Edit Rent" : "Add Rent"}</h2>
+              <span>Only residents from Resident Master are shown below</span>
+            </div>
 
             <form onSubmit={handleSubmit}>
               <div className="form-grid">
+                <div className="form-group full-width">
+                  <label>Resident *</label>
+                  <select
+                    name="residentId"
+                    value={formData.residentId}
+                    onChange={handleInputChange}
+                    disabled={editingId}
+                    required
+                  >
+                    <option value="">Select Resident</option>
 
-                <select
-                  name="residentId"
-                  value={formData.residentId}
-                  onChange={handleInputChange}
-                  disabled={editingId}
-                >
-                  <option value="">Select Resident</option>
+                    {residents.map((resident) => (
+                      <option key={resident._id} value={resident._id}>
+                        {resident.name}
+                        {resident.buildingName ? ` — ${resident.buildingName}` : ""}
+                        {resident.roomNo ? `, Room ${resident.roomNo}` : ""}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-                  {residents.map((resident) => (
-                    <option key={resident._id} value={resident._id}>
-                      {resident.name}
-                    </option>
-                  ))}
-                </select>
+                {selectedResident && (
+                  <div className="resident-info-card">
+                    <strong>{selectedResident.name}</strong>
+                    <span>{selectedResident.email}</span>
+                    {selectedResident.buildingName && (
+                      <span>Building: {selectedResident.buildingName}</span>
+                    )}
+                    {selectedResident.roomNo && (
+                      <span>Room / Flat: {selectedResident.roomNo}</span>
+                    )}
+                    {!selectedResident.buildingName && !selectedResident.roomNo && (
+                      <span className="no-location">No building/room on record — ask resident to update profile</span>
+                    )}
+                  </div>
+                )}
 
-                <input
-                  type="month"
-                  name="month"
-                  value={formData.month}
-                  onChange={handleInputChange}
-                />
+                <div className="form-group">
+                  <label>Billing Month *</label>
+                  <input
+                    type="month"
+                    name="month"
+                    value={formData.month}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
 
-                <input
-                  type="number"
-                  name="rentAmount"
-                  placeholder="Rent Amount"
-                  value={formData.rentAmount}
-                  onChange={handleInputChange}
-                />
+                <div className="form-group">
+                  <label>Due Date</label>
+                  <input
+                    type="date"
+                    name="dueDate"
+                    value={formData.dueDate}
+                    onChange={handleInputChange}
+                  />
+                </div>
 
-                <input
-                  type="number"
-                  name="additionalCharges"
-                  placeholder="Additional Charges"
-                  value={formData.additionalCharges}
-                  onChange={handleInputChange}
-                />
+                <div className="form-group">
+                  <label>Rent Amount (₹) *</label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    name="rentAmount"
+                    placeholder="Enter base rent"
+                    value={formData.rentAmount}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
 
-                <input
-                  type="number"
-                  name="fine"
-                  placeholder="Fine"
-                  value={formData.fine}
-                  onChange={handleInputChange}
-                />
+                <div className="form-group">
+                  <label>Additional Charges (₹)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    name="additionalCharges"
+                    placeholder="Maintenance / utilities"
+                    value={formData.additionalCharges}
+                    onChange={handleInputChange}
+                  />
+                </div>
 
-                <input
-                  type="date"
-                  name="dueDate"
-                  value={formData.dueDate}
-                  onChange={handleInputChange}
-                />
+                <div className="form-group">
+                  <label>Fine (₹)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    name="fine"
+                    placeholder="Late fee"
+                    value={formData.fine}
+                    onChange={handleInputChange}
+                  />
+                </div>
 
-                <textarea
-                  name="notes"
-                  placeholder="Notes"
-                  value={formData.notes}
-                  onChange={handleInputChange}
-                />
+                <div className="form-group full-width">
+                  <label>Notes</label>
+                  <textarea
+                    name="notes"
+                    placeholder="Optional notes visible in rent record"
+                    value={formData.notes}
+                    onChange={handleInputChange}
+                  />
+                </div>
 
               </div>
 
@@ -278,25 +366,60 @@ function AdminRentManagement() {
                 Total: ₹{calculateTotal()}
               </div>
 
-              <button type="submit" className="btn-submit">
-                {editingId ? "Update Rent" : "Create Rent"}
-              </button>
+              <div className="form-actions">
+                <button type="submit" className="btn-submit">
+                  {editingId ? "Update Rent" : "Create Rent"}
+                </button>
 
-              <button type="button" onClick={handleCancel}>
-                Cancel
-              </button>
+                <button type="button" className="btn-cancel" onClick={handleCancel}>
+                  Cancel
+                </button>
+              </div>
             </form>
           </div>
         )}
 
+        <div className="filters-card">
+          <h3>Filter Rent Records</h3>
+          <div className="filters-grid">
+            <div className="filter-group">
+              <label>Resident</label>
+              <select
+                value={searchFilter.residentId}
+                onChange={(e) => setSearchFilter((prev) => ({ ...prev, residentId: e.target.value }))}
+              >
+                <option value="">All Residents</option>
+                {residents.map((resident) => (
+                  <option key={resident._id} value={resident._id}>
+                    {resident.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="filter-group">
+              <label>Status</label>
+              <select
+                value={searchFilter.status}
+                onChange={(e) => setSearchFilter((prev) => ({ ...prev, status: e.target.value }))}
+              >
+                <option value="">All Status</option>
+                <option value="unpaid">Unpaid</option>
+                <option value="partial">Partial</option>
+                <option value="paid">Paid</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
         <div className="records-section">
 
           {loading ? (
-            <p>Loading...</p>
+            <div className="loading-panel">Loading rent records...</div>
           ) : rentRecords.length === 0 ? (
-            <p>No records found</p>
+            <div className="empty-panel">No rent records found for the current filters.</div>
           ) : (
-
+            <div className="rent-table-wrap">
             <table className="rent-table">
 
               <thead>
@@ -320,9 +443,21 @@ function AdminRentManagement() {
                   <tr key={rent._id}>
 
                     <td>
-                      {typeof rent.residentId === "object"
-                        ? rent.residentId.name
-                        : rent.residentId}
+                      {typeof rent.residentId === "object" ? (
+                        <>
+                          {rent.residentId.name}
+                          {(rent.residentId.buildingName || rent.residentId.roomNo) && (
+                            <small className="resident-location">
+                              {rent.residentId.buildingName || "—"}
+                              {rent.residentId.roomNo
+                                ? `, Room ${rent.residentId.roomNo}`
+                                : ""}
+                            </small>
+                          )}
+                        </>
+                      ) : (
+                        rent.residentId
+                      )}
                     </td>
 
                     <td>{rent.month}</td>
@@ -372,6 +507,7 @@ function AdminRentManagement() {
               </tbody>
 
             </table>
+            </div>
 
           )}
 

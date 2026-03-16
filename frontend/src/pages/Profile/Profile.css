@@ -1,20 +1,19 @@
 .profile-container {
-  max-width: 620px;
-  margin: 2.5rem auto;
-  padding: 0 1rem;
+  max-width: 760px;
+  margin: 2.1rem auto;
+  padding: 0 1rem 1rem;
 }
 
-.profile-container h2 {
-  margin-bottom: 1.5rem;
-  text-align: center;
-  font-size: 1.6rem;
+.profile-intro {
+  margin-bottom: 1rem;
 }
 
 .profile-card {
   background: #ffffff;
   padding: 2rem;
-  border-radius: 16px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  border-radius: 18px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
 }
 
 .profile-row {
@@ -24,16 +23,18 @@
 }
 
 .profile-row label {
-  font-size: 0.9rem;
+  font-size: 0.84rem;
+  font-weight: 600;
   margin-bottom: 0.4rem;
   color: #475569;
 }
 
 .profile-row input,
 .profile-row textarea {
-  padding: 0.6rem 0.7rem;
-  border-radius: 8px;
-  border: 1px solid #cbd5e1;
+  padding: 0.7rem 0.78rem;
+  border-radius: 10px;
+  border: 1px solid #d8e1ef;
+  background: #f8fafc;
   font-size: 0.95rem;
 }
 
@@ -44,17 +45,18 @@
 
 .profile-row input:disabled,
 .profile-row textarea:disabled {
-  background: #f8fafc;
+  background: #eef2f8;
   color: #64748b;
 }
 
 .profile-card button {
   width: 100%;
-  padding: 0.7rem;
-  border-radius: 8px;
+  padding: 0.76rem;
+  border-radius: 10px;
   border: none;
   cursor: pointer;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
+  font-weight: 600;
   margin-top: 0.8rem;
 }
 
@@ -63,17 +65,40 @@
 }
 
 .save-btn {
-  background-color: #2563eb;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
   color: white;
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.22);
 }
 
 .cancel-btn {
-  background-color: #e5e7eb;
-  color: #111827;
+  background-color: #e2e8f0;
+  color: #334155;
   margin-top: 0.5rem;
 }
 
 .profile-actions {
   display: flex;
   flex-direction: column;
+}
+
+@media (max-width: 520px) {
+  .profile-container {
+    margin: 1.2rem auto;
+    padding: 0 0.75rem 0.75rem;
+  }
+
+  .profile-container h2 {
+    font-size: 1.28rem;
+  }
+
+  .profile-card {
+    padding: 1.25rem;
+    border-radius: 14px;
+  }
+
+  .profile-row input,
+  .profile-row textarea {
+    font-size: 0.88rem;
+    padding: 0.6rem 0.65rem;
+  }
 }

@@ -59,7 +59,11 @@ function ForgotPassword() {
 
   return (
     <div className="forgot-container">
-      <h1>ResolveX</h1>
+      <div className="auth-brand-block">
+        <span className="auth-kicker">Account Recovery</span>
+        <h1>ResolveX</h1>
+        <p className="auth-subtitle">Reset your password securely and return to your complaint workspace.</p>
+      </div>
 
       <form className="forgot-card" onSubmit={handleResetPassword}>
         <h2>Reset Password</h2>

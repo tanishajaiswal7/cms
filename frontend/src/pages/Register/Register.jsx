@@ -12,6 +12,8 @@ function Register() {
     name: "",
     email: "",
     password: "",
+    buildingName: "",
+    roomNo: "",
     role: "resident",
   });
 
@@ -50,11 +52,15 @@ function Register() {
 
   return (
     <div className="register-container">
-      <h1 className="brand-title">ResolveX</h1>
+      <div className="auth-brand-block">
+        <span className="auth-kicker">Resident Registration</span>
+        <h1 className="brand-title">ResolveX</h1>
+        <p className="auth-subtitle">Create your resident account to raise complaints and track rent records.</p>
+      </div>
 
       <div className="register-card">
         <h2>Create Account</h2>
-        <p>Register to raise and track complaints</p>
+        <p>Register to access your complaint dashboard and payment portal.</p>
 
         {error && <div className="error">{error}</div>}
 
@@ -86,7 +92,21 @@ function Register() {
             required
           />
 
-         
+          <input
+            type="text"
+            name="buildingName"
+            placeholder="Building Name (e.g. Block A, Tower 2)"
+            value={form.buildingName}
+            onChange={handleChange}
+          />
+
+          <input
+            type="text"
+            name="roomNo"
+            placeholder="Room / Flat No (e.g. 101, 4B)"
+            value={form.roomNo}
+            onChange={handleChange}
+          />
 
           <button type="submit" disabled={loading}>
             {loading ? "Registering..." : "Register"}

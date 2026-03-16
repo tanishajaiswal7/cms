@@ -1,4 +1,70 @@
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const stripeSecretKeyRaw = process.env.STRIPE_SECRET_KEY;
+const stripePublishableKeyRaw = process.env.STRIPE_PUBLISHABLE_KEY;
+
+const stripeSecretKey =
+  typeof stripeSecretKeyRaw === "string" ? stripeSecretKeyRaw.trim() : "";
+const stripePublishableKey =
+  typeof stripePublishableKeyRaw === "string"
+    ? stripePublishableKeyRaw.trim()
+    : "";
+
+const maskKey = (key) => {
+  if (!key) return "(empty)";
+  if (key.length <= 18) return key;
+  return `${key.slice(0, 12)}...${key.slice(-6)}`;
+};
+
+if (!stripeSecretKey) {
+  throw new Error(
+    "[Stripe] STRIPE_SECRET_KEY is missing in backend/.env."
+  );
+}
+
+if (!/^sk_(test|live)_/.test(stripeSecretKey)) {
+  throw new Error(
+    `[Stripe] STRIPE_SECRET_KEY has invalid format: ${maskKey(
+      stripeSecretKey
+    )}. Expected prefix sk_test_ or sk_live_.`
+  );
+}
+
+if (!stripePublishableKey) {
+  console.warn(
+    "[Stripe] STRIPE_PUBLISHABLE_KEY is missing in backend/.env."
+  );
+} else if (!/^pk_(test|live)_/.test(stripePublishableKey)) {
+  console.warn(
+    `[Stripe] STRIPE_PUBLISHABLE_KEY has invalid format: ${maskKey(
+      stripePublishableKey
+    )}. Expected prefix pk_test_ or pk_live_.`
+  );
+} else {
+  console.info(
+    `[Stripe] Backend keys loaded: secret=${maskKey(
+      stripeSecretKey
+    )}, publishable=${maskKey(stripePublishableKey)}`
+  );
+}
+
+if (
+  typeof stripeSecretKeyRaw === "string" &&
+  stripeSecretKeyRaw !== stripeSecretKey
+) {
+  console.warn(
+    "[Stripe] Whitespace detected in STRIPE_SECRET_KEY; trimmed automatically."
+  );
+}
+
+if (
+  typeof stripePublishableKeyRaw === "string" &&
+  stripePublishableKeyRaw !== stripePublishableKey
+) {
+  console.warn(
+    "[Stripe] Whitespace detected in STRIPE_PUBLISHABLE_KEY; trimmed automatically."
+  );
+}
+
+const stripe = require("stripe")(stripeSecretKey);
 
 /**
  * Stripe Configuration Module

@@ -22,7 +22,7 @@ const generateRefreshToken = (user) => {
 
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password} = req.body;
+    const { name, email, password, buildingName, roomNo } = req.body;
 
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -33,7 +33,9 @@ const registerUser = async (req, res) => {
       name,
       email,
       password,
-      role:"resident",
+      role: "resident",
+      buildingName: buildingName || "",
+      roomNo: roomNo || "",
     });
 
     res.status(201).json({

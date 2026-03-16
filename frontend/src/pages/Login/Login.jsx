@@ -31,7 +31,7 @@ function Login() {
 
       }
       
-    } catch (err) {
+    } catch {
       setError("Invalid email or password");
     } finally {
       setLoading(false);
@@ -42,11 +42,15 @@ function Login() {
 
   return (
     <div className="login-container">
-      <h1>ResolveX</h1>
+      <div className="auth-brand-block">
+        <span className="auth-kicker">Complaint Management System</span>
+        <h1>ResolveX</h1>
+        <p className="auth-subtitle">A clean workspace for residents, service teams, and admin operations.</p>
+      </div>
 
         <form className="login-card" onSubmit={handleSubmit}>
           <h2>Welcome Back</h2>
-          <p>Please login to continue</p>
+          <p>Sign in to review complaints, resident updates, and rent activity.</p>
 
           {error && <div className="error">{error}</div>}
 

@@ -1,5 +1,6 @@
 const Rent = require("../models/Rent");
 const User = require("../models/User");
+const Resident = require("../models/Resident");
 
 // ================= CREATE RENT =================
 const createRent = async (req, res) => {
@@ -26,11 +27,15 @@ const createRent = async (req, res) => {
       });
     }
 
-    // Validate resident
+    const residentRecord = await Resident.findOne({
+      userId: residentId,
+      isActive: true,
+    });
+
     const resident = await User.findById(residentId);
-    if (!resident || resident.role !== "resident") {
+    if (!residentRecord || !resident || resident.role === "admin") {
       return res.status(404).json({
-        message: "Resident not found",
+        message: "Resident not found in admin resident list",
       });
     }
 
@@ -122,6 +127,19 @@ const getRentByResident = async (req, res) => {
 
     const { residentId } = req.params;
 
+    if (req.user.role !== "admin") {
+      const residentRecord = await Resident.findOne({
+        userId: residentId,
+        isActive: true,
+      });
+
+      if (!residentRecord) {
+        return res.status(403).json({
+          message: "You are not in active resident list",
+        });
+      }
+    }
+
     if (
       req.user.role === "resident" &&
       req.user._id.toString() !== residentId
@@ -158,6 +176,17 @@ const getCurrentMonthRent = async (req, res) => {
     }
 
     const residentId = req.user._id;
+
+    const residentRecord = await Resident.findOne({
+      userId: residentId,
+      isActive: true,
+    });
+
+    if (!residentRecord) {
+      return res.status(403).json({
+        message: "Your account is not in active resident list",
+      });
+    }
 
     const now = new Date();
     const month = `${now.getFullYear()}-${String(

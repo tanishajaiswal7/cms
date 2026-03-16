@@ -4,12 +4,7 @@ A full-stack web application for managing complaints and service providers. The 
 
 ## 📚 Docs Index
 
-- [Rent Feature Guide](./RENT_FEATURE_GUIDE.md)
-- [Stripe Integration Guide](./STRIPE_INTEGRATION_GUIDE.md)
-- [Payment API Documentation](./PAYMENT_API_DOCUMENTATION.md)
-- [Stripe Deployment Checklist](./STRIPE_DEPLOYMENT_CHECKLIST.md)
-- [Stripe Production Setup](./STRIPE_PRODUCTION_SETUP.md)
-- [Stripe Security Best Practices](./STRIPE_SECURITY_BEST_PRACTICES.md)
+- Main project guide: [README.md](./README.md)
 
 ## 📋 Table of Contents
 
@@ -159,6 +154,12 @@ MONGODB_URI=mongodb://your-mongodb-connection-string
 JWT_SECRET=your-jwt-secret-key
 REFRESH_SECRET=your-refresh-secret-key
 NODE_ENV=development
+CORS_ORIGINS=http://localhost:5173,https://your-frontend-domain.com
+
+# Stripe Configuration
+STRIPE_SECRET_KEY=sk_test_or_live_key
+STRIPE_PUBLISHABLE_KEY=pk_test_or_live_key
+STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
 
 # Twilio Configuration
 TWILIO_ACCOUNT_SID=your-twilio-account-sid
@@ -201,7 +202,13 @@ npm install
 
 3. Update API endpoint in `src/api/axios.js` if needed
 
-4. Start development server:
+4. Create `.env` in `frontend`:
+```
+VITE_BACKEND_URL=http://localhost:5000
+VITE_STRIPE_PUBLISHABLE_KEY=pk_test_or_live_key
+```
+
+5. Start development server:
 ```bash
 npm run dev
 ```
@@ -252,11 +259,19 @@ npm run build
 - `JWT_SECRET` - JWT signing secret
 - `REFRESH_SECRET` - Refresh token secret
 - `NODE_ENV` - Environment (development/production)
+- `CORS_ORIGINS` - Comma-separated allowed frontend origins
+- `STRIPE_SECRET_KEY` - Stripe secret key
+- `STRIPE_PUBLISHABLE_KEY` - Stripe publishable key
+- `STRIPE_WEBHOOK_SECRET` - Stripe webhook signing secret
 - `TWILIO_ACCOUNT_SID` - Twilio account ID
 - `TWILIO_AUTH_TOKEN` - Twilio authentication token
 - `TWILIO_WHATSAPP_NUMBER` - Twilio WhatsApp number
 - `EMAIL_USER` - Email service username
 - `EMAIL_PASSWORD` - Email service password
+
+### Frontend
+- `VITE_BACKEND_URL` - Backend API base URL
+- `VITE_STRIPE_PUBLISHABLE_KEY` - Stripe publishable key for client-side checkout
 
 ## 💻 Usage
 

@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }) => {
         }
 
         setUser(refreshedUser);
-      } catch (err) {
+      } catch {
         localStorage.removeItem("accessToken");
         setUser(null);
       } finally {
@@ -79,4 +79,5 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => useContext(AuthContext);

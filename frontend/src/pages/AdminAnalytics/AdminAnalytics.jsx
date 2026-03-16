@@ -58,7 +58,7 @@ function AdminAnalytics() {
         params: { days },
       });
       setTrends(res.data);
-    } catch (err) {
+    } catch {
       console.error("Failed to load trends");
     }
   };
@@ -84,7 +84,7 @@ useEffect(() => {
         params: { days: alertDays },
       });
       setPendingAlerts(res.data);
-    } catch (err) {
+    } catch {
       console.error("Failed to load pending alerts");
     }
   };
@@ -108,10 +108,14 @@ useEffect(() => {
       <Navbar />
 
       <div className="analytics-container">
-        {/* PAGE HEADER */}
         <div className="page-header">
-          <h1>Analytics Overview</h1>
-          <p>Monitor complaint statistics, categories, and trends over time.</p>
+          <div className="page-intro analytics-intro">
+            <span className="page-kicker">Analytics Overview</span>
+            <h1 className="page-title">Monitor complaint volume, category trends, and pending risk.</h1>
+            <p className="page-subtitle">
+              Use these metrics to spot operational bottlenecks, balance technician allocation, and prioritize long-pending complaints.
+            </p>
+          </div>
         </div>
 
         {/* STATS */}
@@ -136,7 +140,7 @@ useEffect(() => {
   )}
 </div>
 
- <h2 className="analytics-subtitle">Pending Alerts</h2>
+ <h2 className="section-title">Pending Alerts</h2>
 
 <div className="alert-filter">
   <span>Show pending more than</span>

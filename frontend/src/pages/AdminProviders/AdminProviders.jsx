@@ -17,7 +17,7 @@ function AdminProviders() {
     await api.put(`/api/providers/${id}/toggle`);
     toast.success("Status updated");
     fetchProviders();
-  } catch (err) {
+  } catch {
     toast.error("Failed to update status");
   }
 };
@@ -28,7 +28,7 @@ function AdminProviders() {
     try {
       const res = await api.get("/api/providers");
       setProviders(res.data);
-    } catch (err) {
+    } catch {
       toast.error("Failed to load providers");
     }
   };
@@ -51,7 +51,7 @@ function AdminProviders() {
       toast.success("Provider added");
       setForm({ name: "", role: "", phone: "" });
       fetchProviders();
-    } catch (err) {
+    } catch {
       toast.error("Failed to add provider");
     }
   };
@@ -63,9 +63,14 @@ function AdminProviders() {
       <Navbar />
 
       <div className="provider-container">
-        <h1>Manage Service Providers</h1>
+        <div className="page-intro provider-intro">
+          <span className="page-kicker">Provider Network</span>
+          <h1 className="page-title">Manage active service providers for complaint assignments.</h1>
+          <p className="page-subtitle">
+            Keep your technician directory accurate so complaints can be routed to the right specialist without delay.
+          </p>
+        </div>
 
-        {/* ADD FORM */}
         <form className="provider-form" onSubmit={handleSubmit}>
           <input
             type="text"
@@ -100,49 +105,42 @@ function AdminProviders() {
           <button type="submit">Add Provider</button>
         </form>
 
-        {/* LIST */}
-        <table className="provider-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Role</th>
-              <th>Phone</th>
-              <th colspan="2">Status</th>
-              
-            </tr>
-          </thead>
+        {providers.length === 0 ? (
+          <div className="empty-panel">No providers added yet. Create your first provider above.</div>
+        ) : (
+          <table className="provider-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Role</th>
+                <th>Phone</th>
+                <th colSpan="2">Status</th>
+              </tr>
+            </thead>
 
-    <tbody>
-  {providers.map((p) => (
-    <tr key={p._id}>
-      <td>{p.name}</td>
-      <td>{p.role}</td>
-      <td>{p.phone}</td>
+            <tbody>
+              {providers.map((p) => (
+                <tr key={p._id}>
+                  <td>{p.name}</td>
+                  <td>{p.role}</td>
+                  <td>{p.phone}</td>
 
-      <td>
-        <span
-          className={`status-badge ${
-            p.active ? "active" : "inactive"
-          }`}
-        >
-          {p.active ? "Active" : "Inactive"}
-        </span>
-      </td>
+                  <td>
+                    <span className={`status-badge ${p.active ? "active" : "inactive"}`}>
+                      {p.active ? "Active" : "Inactive"}
+                    </span>
+                  </td>
 
-      <td>
-        <button
-          className="toggle-btn"
-          onClick={() => toggleStatus(p._id)}
-        >
-          {p.active ? "Deactivate" : "Activate"}
-        </button>
-      </td>
-    </tr>
-  ))}
-</tbody>
-
-
-        </table>
+                  <td>
+                    <button className="toggle-btn" onClick={() => toggleStatus(p._id)}>
+                      {p.active ? "Deactivate" : "Activate"}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </>
   );
