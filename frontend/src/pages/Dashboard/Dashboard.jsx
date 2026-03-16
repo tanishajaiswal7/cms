@@ -154,9 +154,9 @@ function Dashboard() {
                 )}
 
                 {/* IMAGES */}
-                {c.images && c.images.length > 0 && (
+                {c.image && c.image.length > 0 && (
                   <div className="complaint-images">
-                    {c.images.map((img, idx) => (
+                    {c.image.map((img, idx) => (
                       <img
                         key={idx}
                         src={getAssetUrl(img)}

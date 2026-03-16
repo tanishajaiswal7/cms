@@ -197,10 +197,10 @@ const assignProvider = async (complaintId, providerId) => {
                         </div>
                       </td>
                       <td>
-                        {c.images && c.images.length > 0 ? (
+                        {c.image && c.image.length > 0 ? (
                           <img
                             className="complaint-thumbnail"
-                            src={getAssetUrl(c.images[0])}
+                            src={getAssetUrl(c.image[0])}
                             alt="complaint"
                           />
                         ) : (
