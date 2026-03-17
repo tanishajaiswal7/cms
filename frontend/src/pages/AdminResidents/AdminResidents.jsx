@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar/Navbar";
 import axios from "../../api/axios";
 import toast from "react-hot-toast";
+import { validateIndianPhone } from "../../utils/phoneValidation";
 import "./AdminResidents.css";
 
 function AdminResidents() {
   const [residents, setResidents] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [phoneError, setPhoneError] = useState("");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -42,6 +44,14 @@ function AdminResidents() {
       ...prev,
       [name]: value,
     }));
+
+    // Real-time phone validation
+    if (name === "phone" && value.trim() !== "") {
+      const validation = validateIndianPhone(value);
+      setPhoneError(validation.error || "");
+    } else if (name === "phone") {
+      setPhoneError("");
+    }
   };
 
   const handleAddResident = async (e) => {
@@ -49,6 +59,18 @@ function AdminResidents() {
 
     if (!formData.name || !formData.email || !formData.password) {
       toast.error("Name, email and password are required");
+      return;
+    }
+
+    if (!formData.phone) {
+      toast.error("Phone number is required");
+      return;
+    }
+
+    // Validate phone
+    const phoneValidation = validateIndianPhone(formData.phone);
+    if (!phoneValidation.isValid) {
+      toast.error(phoneValidation.error);
       return;
     }
 
@@ -77,6 +99,7 @@ function AdminResidents() {
         roomNo: "",
         notes: "",
       });
+      setPhoneError("");
 
       fetchResidents();
     } catch (error) {
@@ -156,13 +179,16 @@ function AdminResidents() {
               </div>
 
               <div className="form-group">
-                <label>Phone</label>
+                <label>Phone *</label>
                 <input
                   name="phone"
                   placeholder="10-digit mobile"
                   value={formData.phone}
                   onChange={handleInputChange}
+                  maxLength={10}
+                  required
                 />
+                {phoneError && <span style={{ color: "red", fontSize: "0.9rem", marginTop: "0.25rem", display: "block" }}>{phoneError}</span>}
               </div>
 
               <div className="form-group full-width">

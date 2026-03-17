@@ -13,7 +13,9 @@ const serviceProviderSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
-      required: true,
+      required: [true, "Phone number is required"],
+      match: [/^[0-9]{10}$/, "Phone number must be a valid 10-digit Indian mobile number"],
+      trim: true,
     },
      active:{
         type:Boolean,

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
+import { validateIndianPhone } from "../../utils/phoneValidation";
 import "./Profile.css";
 import Navbar from "../../components/Navbar/Navbar";
 import toast from "react-hot-toast";
@@ -18,6 +19,7 @@ function Profile() {
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [phoneError, setPhoneError] = useState("");
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -38,15 +40,14 @@ function Profile() {
 
   const saveProfile = async () => {
     try {
-      // Validation
-      if (form.phone && form.phone.length !== 10) {
-        toast.error("Phone number must be 10 digits");
-        return;
-      }
-
-      if (form.phone && !/^\d+$/.test(form.phone)) {
-        toast.error("Phone number must contain only digits");
-        return;
+      // Validate phone using utility
+      if (form.phone && form.phone.trim() !== "") {
+        const phoneValidation = validateIndianPhone(form.phone);
+        if (!phoneValidation.isValid) {
+          toast.error(phoneValidation.error);
+          setPhoneError(phoneValidation.error);
+          return;
+        }
       }
 
       // Save profile
@@ -60,6 +61,7 @@ function Profile() {
       toast.success("Profile updated successfully");
       setEditMode(false);
       setError(null);
+      setPhoneError("");
     } catch (err) {
       const errorMsg = err.response?.data?.message || "Failed to update profile";
       setError(errorMsg);
@@ -114,10 +116,18 @@ function Profile() {
               disabled={!editMode}
               placeholder="10 digit number"
               maxLength={10}
-              onChange={(e) =>
-                setForm({ ...form, phone: e.target.value })
-              }
+              onChange={(e) => {
+                setForm({ ...form, phone: e.target.value });
+                // Real-time validation
+                if (e.target.value.trim() !== "") {
+                  const validation = validateIndianPhone(e.target.value);
+                  setPhoneError(validation.error || "");
+                } else {
+                  setPhoneError("");
+                }
+              }}
             />
+            {editMode && phoneError && <span style={{ color: "red", fontSize: "0.9rem", marginTop: "0.25rem", display: "block" }}>{phoneError}</span>}
           </div>
 
           <div className="profile-row">

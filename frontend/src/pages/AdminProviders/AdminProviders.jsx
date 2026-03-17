@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar/Navbar";
 import api from "../../api/axios";
+import { validateIndianPhone } from "../../utils/phoneValidation";
 import "./AdminProviders.css";
 import toast from "react-hot-toast";
 
 function AdminProviders() {
   const [providers, setProviders] = useState([]);
+  const [phoneError, setPhoneError] = useState("");
   const [form, setForm] = useState({
     name: "",
     role: "",
@@ -39,17 +41,39 @@ function AdminProviders() {
 
   // input handler
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+
+    // Real-time phone validation
+    if (name === "phone" && value.trim() !== "") {
+      const validation = validateIndianPhone(value);
+      setPhoneError(validation.error || "");
+    } else if (name === "phone") {
+      setPhoneError("");
+    }
   };
 
   // ✅ add provider
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!form.name || !form.role || !form.phone) {
+      toast.error("Name, role and phone are required");
+      return;
+    }
+
+    // Validate phone
+    const phoneValidation = validateIndianPhone(form.phone);
+    if (!phoneValidation.isValid) {
+      toast.error(phoneValidation.error);
+      return;
+    }
+
     try {
       await api.post("/api/providers", form);
       toast.success("Provider added");
       setForm({ name: "", role: "", phone: "" });
+      setPhoneError("");
       fetchProviders();
     } catch {
       toast.error("Failed to add provider");
@@ -96,11 +120,13 @@ function AdminProviders() {
           <input
             type="text"
             name="phone"
-            placeholder="Phone number"
+            placeholder="10-digit mobile number"
             value={form.phone}
             onChange={handleChange}
+            maxLength={10}
             required
           />
+          {phoneError && <span style={{ color: "red", fontSize: "0.9rem", marginTop: "0.25rem", display: "block" }}>{phoneError}</span>}
 
           <button type="submit">Add Provider</button>
         </form>

@@ -19,20 +19,47 @@ const getProfile = async (req, res) => {
 
 // UPDATE PROFILE
 const updateProfile = async (req, res) => {
-  const { phone, address, buildingName, roomNo } = req.body;
+  try {
+    const { phone, address, buildingName, roomNo } = req.body;
 
-  const user = await User.findById(req.user._id);
+    // Validate phone if provided
+    if (phone !== undefined && phone !== null && phone.trim() !== "") {
+      const phoneRegex = /^[0-9]{10}$/;
+      if (!phoneRegex.test(phone.trim())) {
+        return res.status(400).json({
+          success: false,
+          message: "Phone number must be a valid 10-digit Indian mobile number",
+        });
+      }
+    }
 
-  user.phone = phone;
-  user.address = address;
-  if (buildingName !== undefined) user.buildingName = buildingName;
-  if (roomNo !== undefined) user.roomNo = roomNo;
+    const user = await User.findById(req.user._id);
 
-  await user.save();
+    if (phone !== undefined) user.phone = phone.trim();
+    if (address !== undefined) user.address = address;
+    if (buildingName !== undefined) user.buildingName = buildingName;
+    if (roomNo !== undefined) user.roomNo = roomNo;
 
-  res.json({
-    message: "Profile updated successfully",
-  });
+    await user.save();
+
+    res.json({
+      success: true,
+      message: "Profile updated successfully",
+    });
+  } catch (error) {
+    if (error.name === "ValidationError") {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to update profile",
+      error: error.message,
+    });
+  }
 };
 
 // GET ALL RESIDENTS (for admin)

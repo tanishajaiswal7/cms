@@ -63,6 +63,22 @@ const createResident = async (req, res) => {
       notes,
     } = req.body;
 
+    // Validate phone
+    if (!phone || phone.trim() === "") {
+      return res.status(400).json({
+        success: false,
+        message: "Phone number is required",
+      });
+    }
+
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(phone.trim())) {
+      return res.status(400).json({
+        success: false,
+        message: "Phone number must be a valid 10-digit Indian mobile number",
+      });
+    }
+
     let targetUser;
 
     if (userId) {
@@ -106,7 +122,7 @@ const createResident = async (req, res) => {
           email: normalizedEmail,
           password,
           role: "resident",
-          phone: phone || undefined,
+          phone: phone.trim(),
           address: address || "",
           buildingName: buildingName || "",
           roomNo: roomNo || "",
@@ -115,7 +131,7 @@ const createResident = async (req, res) => {
     }
 
     if (name !== undefined) targetUser.name = name;
-    if (phone !== undefined) targetUser.phone = phone || undefined;
+    if (phone !== undefined) targetUser.phone = phone.trim();
     if (address !== undefined) targetUser.address = address;
     if (buildingName !== undefined) targetUser.buildingName = buildingName;
     if (roomNo !== undefined) targetUser.roomNo = roomNo;
